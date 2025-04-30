@@ -35,7 +35,7 @@
 Baneronetwo Web to nowoczesna, responsywna aplikacja internetowa zbudowana przy użyciu React, TypeScript i Tailwind CSS. Charakteryzuje się bogatym zestawem komponentów UI opartych na prymitywach Radix UI i stylizowanych za pomocą Tailwind CSS, zapewniając płynne doświadczenie użytkownika na wszystkich urządzeniach.
 
 <div align="center">
-<img src="https://via.placeholder.com/800x400?text=Baneronetwo+Web+Screenshot" alt="Zrzut ekranu Baneronetwo Web" width="800"/>
+<img src="ScreenNig.png" alt="Zrzut ekranu Baneronetwo Web" width="800"/>
 </div>
 
 ## ✨ Funkcje

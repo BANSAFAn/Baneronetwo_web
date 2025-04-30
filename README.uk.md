@@ -35,7 +35,7 @@
 Baneronetwo Web - це сучасний, чутливий веб-додаток, створений з використанням React, TypeScript та Tailwind CSS. Він відрізняється багатим набором UI-компонентів на основі примітивів Radix UI та стилізованих за допомогою Tailwind CSS, забезпечуючи плавний користувацький досвід на всіх пристроях.
 
 <div align="center">
-<img src="https://via.placeholder.com/800x400?text=Baneronetwo+Web+Screenshot" alt="Скріншот Baneronetwo Web" width="800"/>
+<img src="ScreenNig.png" alt="Скріншот Baneronetwo Web" width="800"/>
 </div>
 
 ## ✨ Особливості

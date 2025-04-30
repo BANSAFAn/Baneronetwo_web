@@ -35,7 +35,7 @@
 Baneronetwo Web is a modern, responsive web application built with React, TypeScript, and Tailwind CSS. It features a rich set of UI components powered by Radix UI primitives and styled with Tailwind CSS, providing a seamless user experience across all devices.
 
 <div align="center">
-<img src="https://via.placeholder.com/800x400?text=Baneronetwo+Web+Screenshot" alt="Baneronetwo Web Screenshot" width="800"/>
+<img src="ScreenNig.png" alt="Baneronetwo Web Screenshot" width="800"/>
 </div>
 
 ## ✨ Features
