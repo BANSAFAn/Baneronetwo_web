@@ -308,6 +308,12 @@ export default function BlogPost() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-12 px-4 min-h-screen">
+        <div className="flex justify-start mb-6">
+          <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+            <Home className="w-5 h-5" />
+            <span>{t('home')}</span>
+          </Link>
+        </div>
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-4">
             <div className="h-10 w-3/4 bg-gray-700 rounded"></div>

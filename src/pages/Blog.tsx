@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, TagIcon } from 'lucide-react';
+import { Calendar, TagIcon, Home } from 'lucide-react';
 
 interface BlogPost {
   id: string;
@@ -54,6 +54,12 @@ export default function Blog() {
 
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
+      <div className="flex justify-start mb-6">
+        <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+          <Home className="w-5 h-5" />
+          <span>{t('home')}</span>
+        </Link>
+      </div>
       <div className="space-y-8 animate-fade-in">
         <div className="flex flex-col items-center text-center mb-10 space-y-4">
           <h1 className="text-4xl md:text-6xl font-bold text-gradient">{t('blog')}</h1>
