@@ -1,0 +1,13 @@
+
+{
+  "blogs": [
+    {
+      "id": "open-source-announcement-en",
+      "title": "My Website is Now Open Source!",
+      "date": "2025-04-30",
+      "summary": "I am pleased to announce that my personal website is now fully open to the community! Learn how to use the code for your own project.",
+      "tags": ["open-source", "development", "website"],
+      "path": "2025-04/open-source-announcement-en.md"
+    }
+  ]
+}

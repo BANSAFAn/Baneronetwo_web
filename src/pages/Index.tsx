@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ParticlesBg from 'particles-bg';
@@ -144,7 +145,7 @@ const Index = () => {
         {/* Main Content Section */}
         <main ref={mainContentRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-20 pb-40">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{t('about_me')}</h2>
                 <p className="text-white/70 mb-6">{t('about_description')}</p>
@@ -175,6 +176,17 @@ const Index = () => {
                   className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105"
                 >
                   {t('read_posts')}
+                </Link>
+              </div>
+              
+              <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2`}>
+                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">{t('blog')}</h2>
+                <p className="text-white/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
+                <Link 
+                  to="/blog" 
+                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105"
+                >
+                  {t('read_blog')}
                 </Link>
               </div>
             </div>

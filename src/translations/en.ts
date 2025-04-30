@@ -5,6 +5,7 @@ export default {
   'about': 'About',
   'projects': 'Projects',
   'posts': 'Posts',
+  'blog': 'Blog',
   
   // Hero Section
   'developer': 'Developer · Content Creator · Gamer',
@@ -25,6 +26,13 @@ export default {
   'my_posts': 'My Posts',
   'posts_description': 'Explore my latest publications and news. I regularly share interesting content, updates, and useful information.',
   'read_posts': 'Read Posts',
+  
+  // Blog section
+  'blog_description': 'Thoughts, insights, and tutorials from my experiences in technology and development.',
+  'all_posts': 'All Posts',
+  'no_posts_found': 'No posts found',
+  'back_to_blog': 'Back to Blog',
+  'read_more': 'Read More',
   
   // Posts Page
   'posts_support': 'Posts & Support',
