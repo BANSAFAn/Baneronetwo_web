@@ -173,23 +173,24 @@ export const AudioPlayer = () => {
     // Try to find music files
     const fetchMusicFiles = async () => {
       try {
-        // Проверим наличие файлов в папке public/music
-        const testTracks = [
-          // Список тестовых треков для проверки
-          '/music/test1.mp3',
-          '/music/test2.mp3',
-          // Добавьте сюда другие пути к файлам, если они у вас есть
-        ];
-        
-        // Проверим все файлы в папке music с расширением .mp3
+        // Сканируем все MP3 файлы в папке public/music
         const validTracks: string[] = [];
         
+        // Список файлов, которые мы знаем, что существуют в папке music
+        const musicFiles = [];
+        
+        // Добавляем все файлы parampam (1-31).mp3
+        for (let i = 1; i <= 31; i++) {
+          musicFiles.push(`/music/parampam (${i}).mp3`);
+        }
+        
         // Проверяем наличие файлов
-        for (const track of testTracks) {
+        for (const track of musicFiles) {
           try {
             const response = await fetch(track, { method: 'HEAD' });
             if (response.ok) {
               validTracks.push(track);
+              console.log(`Найден трек: ${track}`);
             }
           } catch (err) {
             console.log(`Трек ${track} не найден:`, err);
@@ -324,8 +325,8 @@ export const AudioPlayer = () => {
   const noTracksFound = trackList.length === 0;
   
   useEffect(() => {
-    // Повторная попытка подключения эквалайзера при изменении состояния воспроизведения
-    if (isPlaying && audioRef.current && equalizerRef.current) {
+    // Повторная попытка подключения эквалайзера при изменении состояния воспроизведения или трека
+    if (audioRef.current && equalizerRef.current) {
       try {
         // Пробуем напрямую вызвать глобальную функцию setupAnalyser
         if (typeof (window as any).setupAnalyser === 'function') {
@@ -336,7 +337,7 @@ export const AudioPlayer = () => {
         console.error('Ошибка при подключении эквалайзера:', err);
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentTrackIndex, trackList.length]);
   
   if (noTracksFound) {
     return (
