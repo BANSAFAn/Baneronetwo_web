@@ -19,6 +19,7 @@ const Equalizer = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const animationRef = useRef<number>(0);
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   
   useEffect(() => {
     // Initialize with random heights for bars
@@ -34,51 +35,89 @@ const Equalizer = () => {
     };
   }, []);
   
+  // Делаем функцию setupAnalyser доступной глобально
+  useEffect(() => {
+    // Экспортируем функцию в глобальный объект window
+    (window as any).setupAnalyser = setupAnalyser;
+    
+    return () => {
+      // Удаляем функцию при размонтировании компонента
+      delete (window as any).setupAnalyser;
+    };
+  }, []);
+  
   // Update the equalizer when the audio reference is available
   const setupAnalyser = (audioElement: HTMLAudioElement | null) => {
     if (!audioElement) return;
+    console.log('Настройка эквалайзера для аудио элемента:', audioElement);
     
     audioElementRef.current = audioElement;
     
-    // Initialize AudioContext if not already created
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    
-    // Create analyser if not already created
-    if (!analyserRef.current) {
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 64;
-      
-      const source = audioContextRef.current.createMediaElementSource(audioElement);
-      source.connect(analyserRef.current);
-      analyserRef.current.connect(audioContextRef.current.destination);
-    }
-    
-    // Start the animation
-    const updateEqualizer = () => {
-      if (!analyserRef.current || !audioElementRef.current || audioElementRef.current.paused) {
-        // If paused, show gentle random movement
-        setBars(bars => bars.map(() => 2 + Math.random() * 8));
-        animationRef.current = requestAnimationFrame(updateEqualizer);
-        return;
+    try {
+      // Закрываем предыдущий контекст, если он существует
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
       }
       
-      const bufferLength = analyserRef.current.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyserRef.current.getByteFrequencyData(dataArray);
+      // Создаем новый AudioContext
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       
-      // Pick frequencies for each bar
-      const barValues = Array.from({ length: 15 }, (_, i) => {
-        const index = Math.floor(i * (bufferLength / 15));
-        return dataArray[index] / 255 * 50; // Scale to max height of 50px
-      });
+      // Создаем новый анализатор
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      analyserRef.current.fftSize = 128; // Увеличиваем размер FFT для лучшего разрешения
+      analyserRef.current.smoothingTimeConstant = 0.7; // Добавляем сглаживание для более плавной анимации
       
-      setBars(barValues);
+      // Создаем источник из аудио элемента
+      sourceRef.current = audioContextRef.current.createMediaElementSource(audioElement);
+      sourceRef.current.connect(analyserRef.current);
+      analyserRef.current.connect(audioContextRef.current.destination);
+      
+      console.log('Эквалайзер успешно настроен');
+      
+      // Запускаем анимацию
+      updateEqualizer();
+    } catch (error) {
+      console.error('Ошибка при настройке эквалайзера:', error);
+    }
+  };
+  
+  // Функция обновления эквалайзера
+  const updateEqualizer = () => {
+    if (!analyserRef.current || !audioElementRef.current) {
+      // Если анализатор или аудио элемент не доступны, показываем случайное движение
+      setBars(bars => bars.map(() => 2 + Math.random() * 8));
       animationRef.current = requestAnimationFrame(updateEqualizer);
-    };
+      return;
+    }
     
-    updateEqualizer();
+    // Проверяем, воспроизводится ли аудио
+    const isAudioPlaying = !audioElementRef.current.paused && 
+                          !audioElementRef.current.ended && 
+                          audioElementRef.current.currentTime > 0;
+    
+    if (!isAudioPlaying) {
+      // Если аудио не воспроизводится, показываем мягкое случайное движение
+      setBars(bars => bars.map(() => 2 + Math.random() * 5));
+      animationRef.current = requestAnimationFrame(updateEqualizer);
+      return;
+    }
+    
+    // Получаем данные частот
+    const bufferLength = analyserRef.current.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyserRef.current.getByteFrequencyData(dataArray);
+    
+    // Выбираем частоты для каждого столбца
+    const barValues = Array.from({ length: 15 }, (_, i) => {
+      // Используем логарифмическое распределение для лучшего представления частот
+      // Низкие частоты имеют больше энергии, поэтому мы даем им больше веса
+      const index = Math.floor(Math.pow(i / 15, 1.5) * bufferLength);
+      // Масштабируем значение и добавляем небольшую минимальную высоту
+      return 3 + (dataArray[index] / 255) * 60; // Увеличиваем максимальную высоту до 60px
+    });
+    
+    setBars(barValues);
+    animationRef.current = requestAnimationFrame(updateEqualizer);
   };
   
   return (
@@ -89,13 +128,14 @@ const Equalizer = () => {
           className="w-[2px] bg-gradient-to-t from-purple-500 to-blue-500 rounded-full"
           style={{ 
             height: `${Math.max(2, height)}px`, 
-            opacity: 0.7 + (height / 100) 
+            opacity: 0.7 + (height / 100),
+            transition: 'height 0.05s ease-in-out' // Добавляем плавный переход для высоты
           }}
         />
       ))}
       
       {/* This hidden div is used to expose the setupAnalyser function */}
-      <div className="hidden" data-setup-analyser={setupAnalyser} />
+      <div className="hidden" data-setup-analyser="setupAnalyser" />
     </div>
   );
 };
@@ -113,66 +153,39 @@ export const AudioPlayer = () => {
   useEffect(() => {
     // Set up equalizer when audio element is available
     if (audioRef.current && equalizerRef.current) {
-      const setupAnalyser = (equalizerRef.current.querySelector('[data-setup-analyser]') as any)?.dataset?.setupAnalyser;
-      if (typeof setupAnalyser === 'function') {
-        setupAnalyser(audioRef.current);
+      const setupAnalyserElement = equalizerRef.current.querySelector('[data-setup-analyser]') as HTMLDivElement;
+      if (setupAnalyserElement) {
+        // Получаем функцию setupAnalyser из data-атрибута
+        const setupAnalyserFn = setupAnalyserElement.dataset.setupAnalyser;
+        // Проверяем, что функция существует и вызываем её
+        if (setupAnalyserFn && typeof window[setupAnalyserFn as any] === 'function') {
+          window[setupAnalyserFn as any](audioRef.current);
+        } else {
+          // Прямой доступ к функции через свойство объекта
+          const analyserSetup = (window as any).setupAnalyser || (setupAnalyserElement as any).setupAnalyser;
+          if (typeof analyserSetup === 'function') {
+            analyserSetup(audioRef.current);
+          }
+        }
       }
     }
     
     // Try to find music files
     const fetchMusicFiles = async () => {
       try {
-        // Попытка найти все MP3 файлы в папке music
-        try {
-          // Попробуем получить список всех файлов в папке music
-          const response = await fetch('/music');
-          if (!response.ok) {
-            throw new Error('Не удалось получить доступ к папке music');
-          }
-        } catch (err) {
-          console.log('Не удалось получить список файлов напрямую:', err);
-        }
-        
-        // Проверим все файлы в папке music с расширением .mp3
-        const validTracks = [];
-        
-        // Список файлов из папки public/music, которые мы обнаружили через list_dir
-        const musicFiles = [
-          '/music/TRAPCHIK NYA (1).mp3',
-          '/music/TRAPCHIK NYA (2).mp3',
-          '/music/TRAPCHIK NYA (3).mp3',
-          '/music/TRAPCHIK NYA (4).mp3',
-          '/music/TRAPCHIK NYA (5).mp3',
-          '/music/trap muzika (4).mp3',
-          '/music/trap1.2 (1).mp3',
-          '/music/trap1.2 (2).mp3',
-          '/music/trap1.2 (3).mp3',
-          '/music/trap1.2 (4).mp3',
-          '/music/trap1.2 (5).mp3',
-          '/music/trap1.2 (6).mp3',
-          '/music/trapchikik (1).mp3',
-          '/music/trapchikik (2).mp3',
-          '/music/trapchikik (3).mp3',
-          '/music/trapchikik (4).mp3',
-          '/music/Цирковые мелодии (1).mp3',
-          '/music/Цирковые мелодии (2).mp3',
-          '/music/Цирковые мелодии (3).mp3',
-          '/music/Цирковые мелодии (4).mp3',
-          '/music/Цирковые мелодии (5).mp3',
-          '/music/Цирковые мелодии (6).mp3',
-          '/music/Цирковые мелодии (7).mp3',
-          '/music/Шкатулка  (1).mp3',
-          '/music/Шкатулка  (2).mp3',
-          '/music/Шкатулка  (3).mp3',
-          '/music/Шкатулка  (4).mp3',
-          '/music/Шкатулка  (5).mp3',
-          '/music/Шкатулка  (6).mp3',
-          '/music/Шкатулка  (7).mp3',
-          '/music/Шкатулка  (8).mp3'
+        // Проверим наличие файлов в папке public/music
+        const testTracks = [
+          // Список тестовых треков для проверки
+          '/music/test1.mp3',
+          '/music/test2.mp3',
+          // Добавьте сюда другие пути к файлам, если они у вас есть
         ];
         
-        // Проверим каждый файл
-        for (const track of musicFiles) {
+        // Проверим все файлы в папке music с расширением .mp3
+        const validTracks: string[] = [];
+        
+        // Проверяем наличие файлов
+        for (const track of testTracks) {
           try {
             const response = await fetch(track, { method: 'HEAD' });
             if (response.ok) {
@@ -183,13 +196,29 @@ export const AudioPlayer = () => {
           }
         }
         
+        // Если файлы не найдены, добавим демо-трек для тестирования
+        if (validTracks.length === 0) {
+          // Используем демо-трек из общедоступного источника
+          const demoTrack = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+          try {
+            const response = await fetch(demoTrack, { method: 'HEAD' });
+            if (response.ok) {
+              validTracks.push(demoTrack);
+              console.log('Добавлен демо-трек для тестирования');
+            }
+          } catch (err) {
+            console.log('Не удалось загрузить демо-трек:', err);
+          }
+        }
+        
         setTrackList(validTracks);
         console.log('Доступные треки:', validTracks);
         
         if (validTracks.length === 0) {
           toast({
             title: "Музыка не найдена",
-            description: "Проверьте файлы MP3 в папке /public/music",
+            description: "Добавьте MP3 файлы в папку /public/music вашего проекта",
+            variant: "destructive"
           });
         } else {
           console.log(`Найдено ${validTracks.length} музыкальных файлов`);
@@ -291,8 +320,32 @@ export const AudioPlayer = () => {
     return <Volume2 size={18} />;
   };
 
-  if (trackList.length === 0) {
-    return null; // Hide the player if no tracks are found
+  // Показываем плеер даже если треки не найдены, чтобы пользователь видел сообщение
+  const noTracksFound = trackList.length === 0;
+  
+  useEffect(() => {
+    // Повторная попытка подключения эквалайзера при изменении состояния воспроизведения
+    if (isPlaying && audioRef.current && equalizerRef.current) {
+      try {
+        // Пробуем напрямую вызвать глобальную функцию setupAnalyser
+        if (typeof (window as any).setupAnalyser === 'function') {
+          (window as any).setupAnalyser(audioRef.current);
+          console.log('Эквалайзер подключен через глобальную функцию');
+        }
+      } catch (err) {
+        console.error('Ошибка при подключении эквалайзера:', err);
+      }
+    }
+  }, [isPlaying]);
+  
+  if (noTracksFound) {
+    return (
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black/30 backdrop-blur-lg p-3 rounded-full border border-white/10">
+        <div className="text-white text-sm px-4 py-2">
+          Музыка не найдена. Добавьте MP3 файлы в папку /public/music
+        </div>
+      </div>
+    );
   }
 
   return (
