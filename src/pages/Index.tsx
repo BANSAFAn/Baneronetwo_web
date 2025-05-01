@@ -47,16 +47,32 @@ const Index = () => {
     };
   }, []);
 
-  const createPixelEffect = () => {
+  const createPixelEffect = (event?: React.MouseEvent<HTMLAnchorElement>, buttonColors?: string[]) => {
     const newPixels = [];
-    const colors = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9', '#F43F5E', '#22C55E'];
+    const defaultColors = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9', '#F43F5E', '#22C55E'];
+    const colors = buttonColors || defaultColors;
     
-    for (let i = 0; i < 150; i++) {
+    // Определяем позицию для создания частиц
+    let posX = window.innerWidth / 2;
+    let posY = window.innerHeight / 2;
+    
+    // Если событие существует, используем позицию кнопки
+    if (event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      posX = rect.left + rect.width / 2;
+      posY = rect.top + rect.height / 2;
+    }
+    
+    for (let i = 0; i < 50; i++) {
       const size = Math.random() * 6 + 2;
+      // Создаем частицы вокруг позиции кнопки
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 100;
+      
       newPixels.push({
         id: i,
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
+        x: posX + Math.cos(angle) * distance,
+        y: posY + Math.sin(angle) * distance,
         size,
         color: colors[Math.floor(Math.random() * colors.length)],
         tx: (Math.random() - 0.5) * 20
@@ -157,7 +173,7 @@ const Index = () => {
                 <Link 
                   to="/about" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={createPixelEffect}
+                  onMouseEnter={(e) => createPixelEffect(e, ['#3B82F6', '#9333EA'])}
                 >
                   {t('learn_more')}
                 </Link>
@@ -169,7 +185,7 @@ const Index = () => {
                 <Link 
                   to="/projects" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={createPixelEffect}
+                  onMouseEnter={(e) => createPixelEffect(e, ['#9333EA', '#3B82F6'])}
                 >
                   {t('view_projects')}
                 </Link>
@@ -181,7 +197,7 @@ const Index = () => {
                 <Link 
                   to="/posts" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={createPixelEffect}
+                  onMouseEnter={(e) => createPixelEffect(e, ['#DB2777', '#DC2626'])}
                 >
                   {t('read_posts')}
                 </Link>
@@ -193,7 +209,7 @@ const Index = () => {
                 <Link 
                   to="/blog" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={createPixelEffect}
+                  onMouseEnter={(e) => createPixelEffect(e, ['#3B82F6', '#16A34A'])}
                 >
                   {t('blog')}
                 </Link>
