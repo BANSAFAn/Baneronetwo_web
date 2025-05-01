@@ -122,36 +122,80 @@ export const AudioPlayer = () => {
     // Try to find music files
     const fetchMusicFiles = async () => {
       try {
-        // Simulated list of tracks - in a real app, this might come from an API
-        // but since we can't dynamically scan the file system, we'll hardcode some paths
-        const tracks = [
-          '/music/track1.mp3',
-          '/music/track2.mp3',
-          '/music/track3.mp3',
-          '/music/ambient.mp3',
-          '/music/electronic.mp3'
+        // Попытка найти все MP3 файлы в папке music
+        try {
+          // Попробуем получить список всех файлов в папке music
+          const response = await fetch('/music');
+          if (!response.ok) {
+            throw new Error('Не удалось получить доступ к папке music');
+          }
+        } catch (err) {
+          console.log('Не удалось получить список файлов напрямую:', err);
+        }
+        
+        // Проверим все файлы в папке music с расширением .mp3
+        const validTracks = [];
+        
+        // Список файлов из папки public/music, которые мы обнаружили через list_dir
+        const musicFiles = [
+          '/music/TRAPCHIK NYA (1).mp3',
+          '/music/TRAPCHIK NYA (2).mp3',
+          '/music/TRAPCHIK NYA (3).mp3',
+          '/music/TRAPCHIK NYA (4).mp3',
+          '/music/TRAPCHIK NYA (5).mp3',
+          '/music/trap muzika (4).mp3',
+          '/music/trap1.2 (1).mp3',
+          '/music/trap1.2 (2).mp3',
+          '/music/trap1.2 (3).mp3',
+          '/music/trap1.2 (4).mp3',
+          '/music/trap1.2 (5).mp3',
+          '/music/trap1.2 (6).mp3',
+          '/music/trapchikik (1).mp3',
+          '/music/trapchikik (2).mp3',
+          '/music/trapchikik (3).mp3',
+          '/music/trapchikik (4).mp3',
+          '/music/Цирковые мелодии (1).mp3',
+          '/music/Цирковые мелодии (2).mp3',
+          '/music/Цирковые мелодии (3).mp3',
+          '/music/Цирковые мелодии (4).mp3',
+          '/music/Цирковые мелодии (5).mp3',
+          '/music/Цирковые мелодии (6).mp3',
+          '/music/Цирковые мелодии (7).mp3',
+          '/music/Шкатулка  (1).mp3',
+          '/music/Шкатулка  (2).mp3',
+          '/music/Шкатулка  (3).mp3',
+          '/music/Шкатулка  (4).mp3',
+          '/music/Шкатулка  (5).mp3',
+          '/music/Шкатулка  (6).mp3',
+          '/music/Шкатулка  (7).mp3',
+          '/music/Шкатулка  (8).mp3'
         ];
         
-        // Filter to only include tracks that actually exist
-        const validTracks = [];
-        for (const track of tracks) {
+        // Проверим каждый файл
+        for (const track of musicFiles) {
           try {
             const response = await fetch(track, { method: 'HEAD' });
             if (response.ok) {
               validTracks.push(track);
             }
           } catch (err) {
-            console.log(`Track ${track} not found`);
+            console.log(`Трек ${track} не найден:`, err);
           }
         }
         
         setTrackList(validTracks);
-        console.log('Available tracks:', validTracks);
+        console.log('Доступные треки:', validTracks);
         
         if (validTracks.length === 0) {
           toast({
-            title: "No music found",
-            description: "Please add MP3 files to the /public/music directory",
+            title: "Музыка не найдена",
+            description: "Проверьте файлы MP3 в папке /public/music",
+          });
+        } else {
+          console.log(`Найдено ${validTracks.length} музыкальных файлов`);
+          toast({
+            title: "Музыка загружена",
+            description: `Найдено ${validTracks.length} музыкальных файлов`,
           });
         }
       } catch (err) {
@@ -185,8 +229,8 @@ export const AudioPlayer = () => {
             setIsLoading(false);
             toast({
               variant: "destructive",
-              title: "Playback error",
-              description: "Could not play the audio file",
+              title: "Ошибка воспроизведения",
+              description: "Не удалось воспроизвести аудиофайл",
             });
           });
       }
