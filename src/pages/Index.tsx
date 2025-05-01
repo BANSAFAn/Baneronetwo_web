@@ -60,19 +60,20 @@ const Index = () => {
     if (event) {
       const rect = event.currentTarget.getBoundingClientRect();
       posX = rect.left + rect.width / 2;
-      posY = rect.top + rect.height / 2;
+      posY = rect.top + rect.height; // Позиция снизу кнопки
     }
     
     for (let i = 0; i < 50; i++) {
       const size = Math.random() * 6 + 2;
-      // Создаем частицы вокруг позиции кнопки
-      const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 100;
+      // Создаем частицы под кнопкой с небольшим разбросом по горизонтали
+      // и падением вниз от кнопки
+      const horizontalSpread = (Math.random() - 0.5) * 60; // Меньший разброс по горизонтали
+      const verticalOffset = Math.random() * 40 + 5; // Смещение вниз от кнопки
       
       newPixels.push({
         id: i,
-        x: posX + Math.cos(angle) * distance,
-        y: posY + Math.sin(angle) * distance,
+        x: posX + horizontalSpread,
+        y: posY + verticalOffset,
         size,
         color: colors[Math.floor(Math.random() * colors.length)],
         tx: (Math.random() - 0.5) * 20
