@@ -8,6 +8,8 @@ import { Clock } from '@/components/Clock';
 import { SocialLinks } from '@/components/SocialLinks';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { CustomCursor } from '@/components/CustomCursor';
+import { SmoothCursor } from '@/components/ui/smooth-cursor';
 import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/context/LanguageContext';
@@ -80,6 +82,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Custom cursor */}
+      <SmoothCursor />
+      
       <div className="absolute inset-0 backdrop-blur-[3px] opacity-80">
         <ParticlesBg 
           type="cobweb" 
