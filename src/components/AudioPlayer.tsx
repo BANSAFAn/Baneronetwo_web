@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 // Equalizer component
 const Equalizer = () => {
   const [bars, setBars] = useState<number[]>([]);
+  const [volumeLevel, setVolumeLevel] = useState<number>(0); // Добавляем состояние для уровня громкости
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -86,6 +87,7 @@ const Equalizer = () => {
     if (!analyserRef.current || !audioElementRef.current) {
       // Если анализатор или аудио элемент не доступны, показываем случайное движение
       setBars(bars => bars.map(() => 2 + Math.random() * 8));
+      setVolumeLevel(0); // Сбрасываем уровень громкости
       animationRef.current = requestAnimationFrame(updateEqualizer);
       return;
     }
@@ -98,6 +100,7 @@ const Equalizer = () => {
     if (!isAudioPlaying) {
       // Если аудио не воспроизводится, показываем мягкое случайное движение
       setBars(bars => bars.map(() => 2 + Math.random() * 5));
+      setVolumeLevel(0); // Сбрасываем уровень громкости при паузе
       animationRef.current = requestAnimationFrame(updateEqualizer);
       return;
     }
@@ -106,6 +109,11 @@ const Equalizer = () => {
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     analyserRef.current.getByteFrequencyData(dataArray);
+    
+    // Вычисляем текущий уровень громкости (среднее значение всех частот)
+    const sum = dataArray.reduce((acc, val) => acc + val, 0);
+    const avgVolume = sum / bufferLength / 255; // Нормализуем от 0 до 1
+    setVolumeLevel(Math.min(1, avgVolume * 1.2)); // Немного увеличиваем для лучшей видимости, но не больше 1
     
     // Выбираем частоты для каждого столбца
     const barValues = Array.from({ length: 15 }, (_, i) => {
@@ -122,6 +130,17 @@ const Equalizer = () => {
   
   return (
     <div className="flex items-center h-12 gap-[2px] mx-2">
+      {/* Индикатор уровня громкости */}
+      <div className="relative mr-2 w-3 h-12 bg-black/20 rounded-full overflow-hidden">
+        <div 
+          className="absolute bottom-0 w-full bg-gradient-to-t from-green-500 to-yellow-500 rounded-full"
+          style={{ 
+            height: `${volumeLevel * 100}%`,
+            transition: 'height 0.1s ease-out'
+          }}
+        />
+      </div>
+      
       {bars.map((height, index) => (
         <div 
           key={index}
@@ -142,7 +161,7 @@ const Equalizer = () => {
 
 export const AudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState([50]);
+  const [volume, setVolume] = useState([50]); // Начальная громкость 50%
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [trackList, setTrackList] = useState<string[]>([]);
@@ -238,7 +257,8 @@ export const AudioPlayer = () => {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volume[0] / 100;
+      // Преобразуем значение громкости от 0-300 к 0-3 для элемента audio
+      audioRef.current.volume = Math.min(3, volume[0] / 100);
     }
   }, [volume]);
 
@@ -318,7 +338,9 @@ export const AudioPlayer = () => {
   const VolumeIcon = () => {
     if (volume[0] === 0) return <VolumeX size={18} />;
     if (volume[0] < 50) return <Volume1 size={18} />;
-    return <Volume2 size={18} />;
+    if (volume[0] <= 100) return <Volume2 size={18} />;
+    // Для громкости выше 100% добавляем индикатор усиления
+    return <Volume2 size={18} className="text-yellow-400" />;
   };
 
   // Показываем плеер даже если треки не найдены, чтобы пользователь видел сообщение
@@ -388,13 +410,16 @@ export const AudioPlayer = () => {
       
       <div className="flex items-center gap-2">
         <VolumeIcon />
-        <Slider
-          value={volume}
-          onValueChange={setVolume}
-          max={100}
-          step={1}
-          className="w-20"
-        />
+        <div className="flex flex-col items-center">
+          <Slider
+            value={volume}
+            onValueChange={setVolume}
+            max={300} // Увеличиваем максимальную громкость до 300%
+            step={1}
+            className="w-24"
+          />
+          <span className="text-xs text-white/70 mt-1">{volume[0]}%</span>
+        </div>
       </div>
     </div>
   );

@@ -156,7 +156,8 @@ const Index = () => {
                 <p className="text-white/70 mb-6">{t('about_description')}</p>
                 <Link 
                   to="/about" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105"
+                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 button-with-particles"
+                  onMouseEnter={createPixelEffect}
                 >
                   {t('learn_more')}
                 </Link>
@@ -167,7 +168,8 @@ const Index = () => {
                 <p className="text-white/70 mb-6">{t('projects_description')}</p>
                 <Link 
                   to="/projects" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105"
+                  className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 button-with-particles"
+                  onMouseEnter={createPixelEffect}
                 >
                   {t('view_projects')}
                 </Link>
@@ -178,7 +180,8 @@ const Index = () => {
                 <p className="text-white/70 mb-6">{t('posts_description')}</p>
                 <Link 
                   to="/posts" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105"
+                  className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 button-with-particles"
+                  onMouseEnter={createPixelEffect}
                 >
                   {t('read_posts')}
                 </Link>
@@ -189,9 +192,10 @@ const Index = () => {
                 <p className="text-white/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
                 <Link 
                   to="/blog" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105"
+                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 button-with-particles"
+                  onMouseEnter={createPixelEffect}
                 >
-                  {t('read_blog')}
+                  {t('blog')}
                 </Link>
               </div>
             </div>
