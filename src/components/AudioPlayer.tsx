@@ -124,7 +124,7 @@ const Equalizer = () => {
       const safeIndex = Math.min(Math.max(0, index), bufferLength - 1);
       // Масштабируем значение и добавляем небольшую минимальную высоту
       return 3 + (dataArray[safeIndex] / 255) * 60; // Увеличиваем максимальную высоту до 60px
-    });}
+    });
     
     setBars(barValues);
     animationRef.current = requestAnimationFrame(updateEqualizer);
