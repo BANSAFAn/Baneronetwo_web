@@ -47,7 +47,7 @@ const Index = () => {
     };
   }, []);
 
-  const createPixelEffect = (event?: React.MouseEvent<HTMLAnchorElement>, buttonColors?: string[]) => {
+  const createPixelEffect = (event?: React.MouseEvent<HTMLElement>, buttonColors?: string[]) => {
     const newPixels = [];
     const defaultColors = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9', '#F43F5E', '#22C55E'];
     const colors = buttonColors || defaultColors;
@@ -63,6 +63,15 @@ const Index = () => {
       posX = rect.left + rect.width / 2;
       posY = rect.top + rect.height; // Позиция снизу кнопки
       buttonWidth = rect.width;
+    } else if (event === undefined && document.querySelector('.button-with-particles')) {
+      // Если событие не передано, но есть элемент с классом button-with-particles
+      const button = document.querySelector('.button-with-particles');
+      if (button) {
+        const rect = button.getBoundingClientRect();
+        posX = rect.left + rect.width / 2;
+        posY = rect.top + rect.height;
+        buttonWidth = rect.width;
+      }
     }
     
     for (let i = 0; i < 70; i++) { // Увеличиваем количество частиц

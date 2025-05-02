@@ -120,9 +120,11 @@ const Equalizer = () => {
       // Используем логарифмическое распределение для лучшего представления частот
       // Низкие частоты имеют больше энергии, поэтому мы даем им больше веса
       const index = Math.floor(Math.pow(i / 15, 1.5) * bufferLength);
+      // Проверяем, что индекс находится в допустимых пределах
+      const safeIndex = Math.min(Math.max(0, index), bufferLength - 1);
       // Масштабируем значение и добавляем небольшую минимальную высоту
-      return 3 + (dataArray[index] / 255) * 60; // Увеличиваем максимальную высоту до 60px
-    });
+      return 3 + (dataArray[safeIndex] / 255) * 60; // Увеличиваем максимальную высоту до 60px
+    });}
     
     setBars(barValues);
     animationRef.current = requestAnimationFrame(updateEqualizer);
