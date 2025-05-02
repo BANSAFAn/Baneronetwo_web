@@ -18,7 +18,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [pixels, setPixels] = useState<{id: number, x: number, y: number, size: number, color: string, tx: number}[]>([]);
+  const [pixels, setPixels] = useState<{id: number, x: number, y: number, size: number, color: string, tx: number, ty?: number}[]>([]);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const { t } = useLanguage();
@@ -55,20 +55,27 @@ const Index = () => {
     // Определяем позицию для создания частиц
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2;
+    let buttonWidth = 0;
     
     // Если событие существует, используем позицию кнопки
     if (event) {
       const rect = event.currentTarget.getBoundingClientRect();
       posX = rect.left + rect.width / 2;
       posY = rect.top + rect.height; // Позиция снизу кнопки
+      buttonWidth = rect.width;
     }
     
-    for (let i = 0; i < 50; i++) {
-      const size = Math.random() * 6 + 2;
-      // Создаем частицы под кнопкой с небольшим разбросом по горизонтали
-      // и падением вниз от кнопки
-      const horizontalSpread = (Math.random() - 0.5) * 60; // Меньший разброс по горизонтали
-      const verticalOffset = Math.random() * 40 + 5; // Смещение вниз от кнопки
+    for (let i = 0; i < 70; i++) { // Увеличиваем количество частиц
+      const size = Math.random() * 5 + 1; // Немного уменьшаем размер частиц
+      
+      // Ограничиваем разброс шириной кнопки
+      const horizontalSpread = (Math.random() - 0.5) * (buttonWidth || 100);
+      
+      // Увеличиваем вертикальное смещение для эффекта падения
+      const verticalOffset = Math.random() * 20 + 2; // Начинаем ближе к кнопке
+      
+      // Добавляем вертикальную скорость для эффекта падения
+      const verticalSpeed = Math.random() * 15 + 5;
       
       newPixels.push({
         id: i,
@@ -76,7 +83,8 @@ const Index = () => {
         y: posY + verticalOffset,
         size,
         color: colors[Math.floor(Math.random() * colors.length)],
-        tx: (Math.random() - 0.5) * 20
+        tx: (Math.random() - 0.5) * 10, // Уменьшаем горизонтальное движение
+        ty: verticalSpeed // Добавляем вертикальное движение вниз
       });
     }
     
@@ -122,7 +130,8 @@ const Index = () => {
             width: `${pixel.size}px`,
             height: `${pixel.size}px`,
             backgroundColor: pixel.color,
-            '--tx': `${pixel.tx}px`
+            '--tx': `${pixel.tx}px`,
+            '--ty': `${pixel.ty || 20}px`
           } as React.CSSProperties}
         />
       ))}
