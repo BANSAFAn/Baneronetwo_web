@@ -7,7 +7,15 @@
       "date": "2025-04-30",
       "summary": "I am pleased to announce that my personal website is now fully open to the community! Learn how to use the code for your own project.",
       "tags": ["open-source", "development", "website"],
-      "path": "2025-04/open-source-announcement-en.md"
+      "path": "open-source-announcement-en.md"
+    },
+    {
+      "id": "brave",
+      "title": "[Dossier] Brave Browser: Privacy Champion or Ethical Gray Zone?",
+      "date": "2024-06-20",
+      "summary": "A deep dive into Brave Browser's history of controversies, including affiliate link scandals, crypto partnerships, and legal battles.",
+      "tags": ["privacy", "browser", "crypto", "controversy"],
+      "path": "brave.md"
     }
   ]
 }
