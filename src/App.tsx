@@ -1,7 +1,8 @@
 
 import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SmoothCursor } from '@/components/ui/smooth-cursor';
+// Отключаем SmoothCursor, чтобы курсор не отображался на сайте
+// import { SmoothCursor } from '@/components/ui/smooth-cursor';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -20,7 +21,7 @@ function App() {
   return (
     <LanguageProvider>
       <Router>
-        <SmoothCursor />
+        {/* Компонент SmoothCursor отключен */}
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
             <Route path="/" element={<Index />} />

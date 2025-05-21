@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
-import { ArrowLeft, Calendar, TagIcon, Table, Code, Copy, Youtube, Image, File, Video } from 'lucide-react';
+import { ArrowLeft, Calendar, TagIcon, Table, Code, Copy, Youtube, Image, File, Video, Home } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
@@ -309,7 +309,7 @@ export default function BlogPost() {
     return (
       <div className="container mx-auto py-12 px-4 min-h-screen">
         <div className="flex justify-start mb-6">
-          <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
             <Home className="w-5 h-5" />
             <span>{t('home')}</span>
           </Link>
@@ -348,7 +348,7 @@ export default function BlogPost() {
     <div className="container mx-auto py-12 px-4 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <Link to="/blog" className="inline-block mb-6">
-          <Button variant="outline" className="glass-morphism hover:bg-white/10">
+          <Button variant="outline" className="glass-morphism hover:bg-purple-400/20 border-purple-400/30 hover:border-purple-400/70 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_0_8px_rgba(168,85,247,0.4)]">
             <ArrowLeft className="mr-2" />
             {t('back_to_blog')}
           </Button>
@@ -376,8 +376,7 @@ export default function BlogPost() {
             </div>
           </div>
           
-          <div className="prose prose-invert max-w-none prose-pre:bg-black/50 prose-pre:backdrop-blur-md prose-pre:border prose-pre:border-white/10 prose-img:rounded-lg prose-headings:text-gradient">
-            <ReactMarkdown 
+          <div className="prose prose-invert max-w-none prose-pre:bg-black/50 prose-pre:backdrop-blur-md prose-pre:border prose-pre:border-white/10 prose-img:rounded-lg prose-headings:text-gradient prose-a:text-purple-300 prose-a:font-medium prose-a:no-underline prose-a:relative prose-a:border-b-2 prose-a:border-purple-400 hover:prose-a:border-purple-300 prose-a:transition-all prose-a:duration-300 hover:prose-a:text-purple-200 hover:prose-a:translate-y-[-2px] prose-a:after:content-[''] prose-a:after:absolute prose-a:after:w-0 prose-a:after:h-full prose-a:after:bg-purple-400/20 prose-a:after:left-0 prose-a:after:top-0 prose-a:after:transition-all prose-a:after:duration-300 hover:prose-a:after:w-full prose-a:px-1 prose-a:mx-0.5 prose-a:py-0.5 hover:prose-a:shadow-[0_0_12px_rgba(192,132,252,0.6)] prose-a:bg-purple-500/10">            <ReactMarkdown 
               components={renderers}
               rehypePlugins={[rehypeRaw]} 
               remarkPlugins={[remarkGfm]}

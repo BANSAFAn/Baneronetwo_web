@@ -55,7 +55,7 @@ export default function Blog() {
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
       <div className="flex justify-start mb-6">
-        <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+        <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
           <Home className="w-5 h-5" />
           <span>{t('home')}</span>
         </Link>
