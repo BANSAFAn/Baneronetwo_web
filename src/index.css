@@ -98,6 +98,34 @@
   animation: float-in 0.8s ease-out forwards;
 }
 
+/* Анимация для ссылок в блоге */
+.blog-content a {
+  position: relative;
+  color: #a78bfa;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.blog-content a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #a78bfa, #ec4899);
+  transition: width 0.3s ease;
+}
+
+.blog-content a:hover {
+  color: #ec4899;
+  text-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+}
+
+.blog-content a:hover::after {
+  width: 100%;
+}
+
 @keyframes float-in-delayed {
   0% {
     opacity: 0;

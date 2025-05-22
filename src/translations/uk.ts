@@ -14,6 +14,16 @@ export default {
   'about_me': 'Про мене',
   'about_description': 'Ласкаво просимо на мій персональний сайт. Я розробник і творець контенту з багаторічним досвідом. Мої проекти та соціальні мережі можна знайти вище.',
   'learn_more': 'Дізнатися більше',
+  'about_me_title': 'Про мене',
+  'projects_count': '{count} проектів',
+  'web_development': 'Веб-розробка',
+  'web_development_desc': 'Створення сучасних, адаптивних веб-сайтів з індивідуальним дизайном',
+  'localization': 'Локалізація',
+  'localization_desc': 'Професійний переклад та адаптація контенту для різних мов',
+  'youtube_promotion': 'Просування на YouTube',
+  'youtube_promotion_desc': 'Просування відео (до 1,000 переглядів)',
+  'community_moderation': 'Модерація спільноти',
+  'community_moderation_desc': 'Управління та модерація серверів Discord або Reddit',
   
   // Projects section
   'my_projects': 'Мої проекти',

@@ -110,6 +110,24 @@ export function SmoothCursor({
     damping: 35,
   });
 
+  // Добавляем глобальные стили для скрытия стандартного курсора
+  useEffect(() => {
+    // Создаем стилевой элемент
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = `
+      * {
+        cursor: none !important;
+      }
+    `;
+    // Добавляем стили в head документа
+    document.head.appendChild(styleElement);
+    
+    // Удаляем стили при размонтировании компонента
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+
   useEffect(() => {
     const updateVelocity = (currentPos: Position) => {
       const currentTime = Date.now();
@@ -191,7 +209,7 @@ export function SmoothCursor({
         translateY: "-50%",
         rotate: rotation,
         scale: scale,
-        zIndex: 100,
+        zIndex: 999999,
         pointerEvents: "none",
         willChange: "transform",
       }}

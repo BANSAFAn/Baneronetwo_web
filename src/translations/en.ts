@@ -14,6 +14,16 @@ export default {
   'about_me': 'About Me',
   'about_description': 'Welcome to my personal website. I\'m a developer and content creator with years of experience. You can find my projects and social networks above.',
   'learn_more': 'Learn More',
+  'about_me_title': 'About Me',
+  'projects_count': '{count} projects',
+  'web_development': 'Web Development',
+  'web_development_desc': 'Creating modern, responsive websites with custom design',
+  'localization': 'Localization',
+  'localization_desc': 'Professional translation and adaptation of content for different languages',
+  'youtube_promotion': 'YouTube Promotion',
+  'youtube_promotion_desc': 'Video promotion (up to 1,000 views)',
+  'community_moderation': 'Community Moderation',
+  'community_moderation_desc': 'Management and moderation of Discord or Reddit servers',
   
   // Projects section
   'my_projects': 'My Projects',
