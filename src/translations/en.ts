@@ -7,6 +7,26 @@ export default {
   'posts': 'Posts',
   'blog': 'Blog',
   
+  // Skills section
+  'my_skills': 'My Skills',
+  'programming_languages': 'Programming Languages',
+  'skills': 'Skills',
+  'services': 'Services',
+  'prices': 'Prices',
+  
+  // Programming languages descriptions
+  'cpp_description': 'A powerful programming language with high performance, used for system programming, games, and applications requiring efficient memory management.',
+  'csharp_description': 'A modern object-oriented language from Microsoft, widely used for Windows application development, Unity games, and ASP.NET web applications.',
+  'c_description': 'A fundamental programming language used for operating system development, embedded systems, and applications requiring direct access to hardware resources.',
+  'rust_description': 'A modern systems programming language focusing on safety, concurrency, and performance, preventing segmentation faults and ensuring thread safety.',
+  'swift_description': 'A powerful and intuitive programming language from Apple for iOS, macOS, watchOS, and tvOS, combining the best aspects of modern languages with safety and performance.',
+  'typescript_description': 'A superset of JavaScript adding static typing, enhancing code reliability and improving development tools for building scalable web applications.',
+  'javascript_description': 'A versatile programming language for web development, allowing the creation of interactive web pages and applications that run on both client and server sides.',
+  'vue_description': 'A progressive JavaScript framework for building user interfaces, easily integrable into projects and providing reactivity and component-based architecture.',
+  'css_description': 'A style sheet language used to describe the presentation of web pages, allowing control over colors, fonts, element positioning, and responsive design.',
+  'lua_description': 'A lightweight and powerful scripting language, commonly used in the gaming industry, embedded systems, and applications where extensibility through scripts is required.',
+  'go_description': 'A modern programming language from Google, designed for high performance, concurrent execution, and ease of use when creating scalable network applications and microservices.',
+  
   // Hero Section
   'developer': 'Developer · Content Creator · Gamer',
   
@@ -70,4 +90,18 @@ export default {
   'english': 'English',
   'russian': 'Russian',
   'ukrainian': 'Ukrainian',
+  
+  // Services
+  'my_services': 'My Services',
+  'cybersecurity': 'Cybersecurity',
+  'cybersecurity_desc': 'Protection of systems and data from threats, security audits, consultations on best practices for information protection.',
+  'localization_service': 'Localization',
+  'localization_service_desc': 'Professional translation and adaptation of websites, applications, and games for different languages and cultures.',
+  'community_management': 'Community Management',
+  'community_management_desc': 'Moderation and development of online communities on various platforms, including Discord, Reddit, and YouTube.',
+  'web_dev_service': 'Web Development',
+  'web_dev_service_desc': 'Creation of modern, responsive websites and applications using advanced technologies and frameworks.',
+  
+  // About page
+  'about_greeting': 'Hello! I am an experienced developer and content creator specializing in web development, cybersecurity, and localization. My passion is creating innovative digital solutions and sharing knowledge with the community. I actively participate in various technology projects and manage several online communities.',
 };

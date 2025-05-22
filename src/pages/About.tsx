@@ -8,7 +8,13 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  // Инициализируем активную вкладку с явным значением по умолчанию
   const [activeTab, setActiveTab] = useState<string>('skills');
+  
+  // Добавляем эффект для отслеживания изменений activeTab
+  useEffect(() => {
+    console.log('Активная вкладка изменена на:', activeTab);
+  }, [activeTab]);
   const { t } = useLanguage();
   
   // Анимационные варианты
@@ -21,6 +27,16 @@ const About = () => {
         delayChildren: 0.2,
       },
     },
+  };
+  
+  // Определяем стили для мобильных устройств
+  const mobileStyles = {
+    cardPadding: "p-4",
+    textSize: "text-sm",
+    headingSize: "text-2xl",
+    iconSize: "w-6 h-6",
+    gridGap: "gap-3",
+    sectionSpacing: "space-y-8",
   };
 
   const itemVariants = {
@@ -36,19 +52,74 @@ const About = () => {
     },
   };
 
-  // Языки программирования
+  // Языки программирования с описаниями
   const programmingLanguages = [
-    { value: 'C++', logo: '/src/assets/logos/cpp-logo.svg', color: '#9b87f5' },
-    { value: 'C#', logo: '/src/assets/logos/csharp-logo.svg', color: '#7E69AB' },
-    { value: 'C', logo: '/src/assets/logos/c-logo.svg', color: '#6E59A5' },
-    { value: 'Rust', logo: 'https://rustacean.net/assets/rustacean-flat-happy.svg', color: '#F97316' },
-    { value: 'Swift', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg', color: '#D946EF' },
-    { value: 'TypeScript', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', color: '#0EA5E9' },
-    { value: 'JavaScript', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', color: '#1EAEDB' },
-    { value: 'Vue', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', color: '#33C3F0' },
-    { value: 'CSS', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg', color: '#E5DEFF' },
-    { value: 'Lua', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/lua/lua-original.svg', color: '#FFDEE2' },
-    { value: 'Go', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg', color: '#FDE1D3' }
+    { 
+      value: 'C++', 
+      logo: '/src/assets/logos/cpp-logo.svg', 
+      color: '#9b87f5',
+      description: t('cpp_description') || 'Мощный язык программирования с высокой производительностью, используемый для системного программирования, игр и приложений, требующих эффективного управления памятью.'
+    },
+    { 
+      value: 'C#', 
+      logo: '/src/assets/logos/csharp-logo.svg', 
+      color: '#7E69AB',
+      description: t('csharp_description') || 'Современный объектно-ориентированный язык от Microsoft, широко используемый для разработки Windows-приложений, игр на Unity и веб-приложений с ASP.NET.'
+    },
+    { 
+      value: 'C', 
+      logo: '/src/assets/logos/c-logo.svg', 
+      color: '#6E59A5',
+      description: t('c_description') || 'Фундаментальный язык программирования, используемый для разработки операционных систем, встраиваемых систем и приложений, требующих прямого доступа к аппаратным ресурсам.'
+    },
+    { 
+      value: 'Rust', 
+      logo: 'https://rustacean.net/assets/rustacean-flat-happy.svg', 
+      color: '#F97316',
+      description: t('rust_description') || 'Современный системный язык программирования, фокусирующийся на безопасности, параллелизме и производительности, предотвращающий ошибки сегментации и обеспечивающий потокобезопасность.'
+    },
+    { 
+      value: 'Swift', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg', 
+      color: '#D946EF',
+      description: t('swift_description') || 'Мощный и интуитивно понятный язык программирования от Apple для iOS, macOS, watchOS и tvOS, сочетающий лучшие аспекты современных языков с безопасностью и производительностью.'
+    },
+    { 
+      value: 'TypeScript', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', 
+      color: '#0EA5E9',
+      description: t('typescript_description') || 'Надмножество JavaScript с добавлением статической типизации, повышающее надежность кода и улучшающее инструменты разработки для создания масштабируемых веб-приложений.'
+    },
+    { 
+      value: 'JavaScript', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', 
+      color: '#1EAEDB',
+      description: t('javascript_description') || 'Универсальный язык программирования для веб-разработки, позволяющий создавать интерактивные веб-страницы и приложения, работающие как на стороне клиента, так и на сервере.'
+    },
+    { 
+      value: 'Vue', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', 
+      color: '#33C3F0',
+      description: t('vue_description') || 'Прогрессивный JavaScript-фреймворк для создания пользовательских интерфейсов, легко интегрируемый в проекты и обеспечивающий реактивность и компонентную архитектуру.'
+    },
+    { 
+      value: 'CSS', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg', 
+      color: '#E5DEFF',
+      description: t('css_description') || 'Язык таблиц стилей, используемый для описания внешнего вида веб-страниц, позволяющий контролировать цвета, шрифты, расположение элементов и адаптивность дизайна.'
+    },
+    { 
+      value: 'Lua', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/lua/lua-original.svg', 
+      color: '#FFDEE2',
+      description: t('lua_description') || 'Легкий и мощный скриптовый язык, часто используемый в игровой индустрии, встраиваемых системах и приложениях, где требуется расширяемость через скрипты.'
+    },
+    { 
+      value: 'Go', 
+      logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg', 
+      color: '#FDE1D3',
+      description: t('go_description') || 'Современный язык программирования от Google, разработанный для высокой производительности, параллельного выполнения и простоты использования при создании масштабируемых сетевых приложений и микросервисов.'
+    }
   ];
   
   // Анимации для логотипов языков программирования
@@ -114,36 +185,36 @@ const About = () => {
 
   // Навыки
   const skills = [
-    { name: "Веб-разработка", level: 90, color: "#0EA5E9" },
-    { name: "Кибербезопасность", level: 85, color: "#8B5CF6" },
-    { name: "Локализация", level: 95, color: "#D946EF" },
-    { name: "Управление сообществом", level: 80, color: "#F97316" },
-    { name: "Разработка игр", level: 75, color: "#10B981" },
+    { name: t('web_dev_service'), level: 90, color: "#0EA5E9" },
+    { name: t('cybersecurity'), level: 85, color: "#8B5CF6" },
+    { name: t('localization_service'), level: 95, color: "#D946EF" },
+    { name: t('community_management'), level: 80, color: "#F97316" },
+    { name: t('web_dev_service'), level: 75, color: "#10B981" },
   ];
 
   // Услуги
   const services = [
     {
-      title: "Кибербезопасность",
-      description: "Защита систем и данных от угроз, аудит безопасности, консультации по лучшим практикам защиты информации.",
+      title: t('cybersecurity'),
+      description: t('cybersecurity_desc'),
       icon: <Shield className="w-10 h-10 text-[#8B5CF6]" />,
       gradient: "from-[#8B5CF6] via-[#D946EF] to-[#F97316]"
     },
     {
-      title: "Локализация",
-      description: "Профессиональный перевод и адаптация веб-сайтов, приложений и игр для различных языков и культур.",
+      title: t('localization_service'),
+      description: t('localization_service_desc'),
       icon: <Globe className="w-10 h-10 text-[#0EA5E9]" />,
       gradient: "from-[#0EA5E9] via-[#8B5CF6] to-[#D946EF]"
     },
     {
-      title: "Управление сообществом",
-      description: "Модерация и развитие онлайн-сообществ на различных платформах, включая Discord, Reddit и YouTube.",
+      title: t('community_management'),
+      description: t('community_management_desc'),
       icon: <Users className="w-10 h-10 text-[#F97316]" />,
       gradient: "from-[#F97316] via-[#D946EF] to-[#0EA5E9]"
     },
     {
-      title: "Веб-разработка",
-      description: "Создание современных, отзывчивых веб-сайтов и приложений с использованием передовых технологий и фреймворков.",
+      title: t('web_dev_service'),
+      description: t('web_dev_service_desc'),
       icon: <Laptop className="w-10 h-10 text-[#10B981]" />,
       gradient: "from-[#10B981] via-[#0EA5E9] to-[#8B5CF6]"
     }
@@ -178,7 +249,7 @@ const About = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white p-3 md:p-8 relative overflow-hidden">
       <div className="absolute top-4 right-4 z-50">
         <LanguageSwitcher />
       </div>
@@ -217,7 +288,7 @@ const About = () => {
         <span className="group-hover:text-purple-400 transition-colors">{t('back')}</span>
       </Link>
 
-      <div className="max-w-5xl mx-auto space-y-20 pt-16">
+      <div className="max-w-5xl mx-auto space-y-8 md:space-y-20 pt-12 md:pt-16">
         {/* Герой-секция */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
@@ -229,7 +300,7 @@ const About = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]"
           >
             {t('about_me_title')}
           </motion.h1>
@@ -241,9 +312,9 @@ const About = () => {
             className="relative group max-w-3xl mx-auto"
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#F97316] rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-gradient bg-[length:200%_auto]"></div>
-            <div className="relative bg-black/80 backdrop-blur-sm p-6 md:p-8 rounded-xl">
+            <div className="relative bg-black/80 backdrop-blur-sm p-4 md:p-6 rounded-xl">
               <p className="text-lg md:text-xl leading-relaxed">
-                Привет! Я опытный разработчик и создатель контента, специализирующийся на веб-разработке, кибербезопасности и локализации. Моя страсть — создавать инновационные цифровые решения и делиться знаниями с сообществом. Я активно участвую в различных технологических проектах и управляю несколькими онлайн-сообществами.
+                {t('about_greeting')}
               </p>
             </div>
           </motion.div>
@@ -251,22 +322,36 @@ const About = () => {
 
         {/* Табы для переключения между секциями */}
         <div className="flex flex-col items-center space-y-12">
-          <div className="flex justify-center space-x-2 p-1 bg-white/5 backdrop-blur-md rounded-lg">
+          <div className="flex flex-wrap justify-center gap-1 md:gap-2 p-1 bg-white/5 backdrop-blur-md rounded-lg">
             {['skills', 'services', 'prices'].map((tab) => (
-              <button
+              <motion.button
                 key={tab}
-                onClick={() => {
+                onClick={(e) => {
+                  // Явно устанавливаем значение вкладки и добавляем console.log для отладки
+                  console.log('Переключение на вкладку:', tab);
                   setActiveTab(tab);
-                  createParticles(event as React.MouseEvent<HTMLElement>);
+                  createParticles(e as React.MouseEvent<HTMLElement>);
                 }}
-                className={`px-4 py-2 rounded-md transition-all duration-300 ${activeTab === tab 
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
-                  : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-3 md:px-4 py-1 md:py-2 rounded-md transition-all duration-300 ${activeTab === tab 
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-600/20' 
+                  : 'text-white/70 hover:text-white hover:bg-white/10'} min-w-[70px] md:min-w-[80px] text-center text-sm md:text-base relative overflow-hidden`}
               >
-                {tab === 'skills' && 'Навыки'}
-                {tab === 'services' && 'Услуги'}
-                {tab === 'prices' && 'Прайс-лист'}
-              </button>
+                {activeTab === tab && (
+                  <motion.div 
+                    layoutId="tabHighlight"
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-md"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10">
+                  {tab === 'skills' && t('skills')}
+                  {tab === 'services' && t('services')}
+                  {tab === 'prices' && t('prices')}
+                </span>
+              </motion.button>
             ))}
           </div>
 
@@ -282,42 +367,59 @@ const About = () => {
                 variants={itemVariants}
                 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent"
               >
-                Мои навыки
+                {t('my_skills')}
               </motion.h2>
               
               {/* Языки программирования */}
               <motion.div variants={itemVariants} className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0EA5E9] via-[#8B5CF6] to-[#D946EF] rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                <div className="relative bg-black/80 backdrop-blur-sm p-6 rounded-xl">
-                  <h3 className="text-xl font-bold mb-6 text-center">Языки программирования</h3>
-                  <div className="flex flex-wrap justify-center gap-6 py-4">
+                <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
+                  <h3 className="text-xl font-bold mb-6 text-center">{t('programming_languages')}</h3>
+                  <div className="flex flex-wrap justify-center gap-2 md:gap-6 py-2 md:py-4">
                     {programmingLanguages.map((lang) => (
-                      <motion.div
-                        key={lang.value}
-                        whileHover={{ scale: 1.1 }}
-                        className="flex flex-col items-center"
-                        onMouseEnter={() => setHoveredSkill(lang.value)}
-                        onMouseLeave={() => setHoveredSkill(null)}
-                      >
-                        <motion.div 
-                          className="w-16 h-16 flex items-center justify-center mb-2 transition-all duration-300"
-                          style={{
-                            filter: hoveredSkill === lang.value 
-                              ? `drop-shadow(0 0 12px ${lang.color})` 
-                              : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))'
-                          }}
-                          whileHover={logoAnimations.hover(lang.color)}
-                          whileTap={logoAnimations.tap}
+                      <div key={lang.value} className="relative group">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          className="flex flex-col items-center"
+                          onMouseEnter={() => setHoveredSkill(lang.value)}
+                          onMouseLeave={() => setHoveredSkill(null)}
                         >
-                          <img 
-                            src={lang.logo} 
-                            alt={lang.value}
-                            className="w-12 h-12 object-contain"
-                          />
+                          <motion.div 
+                            className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center mb-1 md:mb-2 transition-all duration-300"
+                            style={{
+                              filter: hoveredSkill === lang.value 
+                                ? `drop-shadow(0 0 12px ${lang.color})` 
+                                : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))'
+                            }}
+                            whileHover={logoAnimations.hover(lang.color)}
+                            whileTap={logoAnimations.tap}
+                            animate={{
+                              rotate: hoveredSkill === lang.value ? [0, -5, 5, -5, 0] : 0,
+                              transition: { duration: 0.5, ease: "easeInOut" }
+                            }}
+                          >
+                            <img 
+                              src={lang.logo} 
+                              alt={lang.value}
+                              className="w-8 h-8 md:w-12 md:h-12 object-contain"
+                            />
+                          </motion.div>
+                          <span className="text-sm font-medium">{lang.value}</span>
                         </motion.div>
-                        <span className="text-sm font-medium">{lang.value}</span>
-                        <span className="text-xs text-white/60">{t('projects_count').replace('{count}', lang.count.toString())}</span>
-                      </motion.div>
+                        
+                        {/* Всплывающая подсказка с описанием языка */}
+                        {hoveredSkill === lang.value && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 rounded-lg bg-black/90 backdrop-blur-md border border-white/10 shadow-xl"
+                          >
+                            <div className="text-xs md:text-sm text-white/90">{lang.description}</div>
+                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-black/90 border-r border-b border-white/10"></div>
+                          </motion.div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -334,10 +436,10 @@ const About = () => {
                     className="space-y-2"
                   >
                     <div className="flex justify-between">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-white/60">{skill.level}%</span>
+                      <span className="text-sm md:text-base font-medium">{skill.name}</span>
+                      <span className="text-sm md:text-base text-white/60">{skill.level}%</span>
                     </div>
-                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-1.5 md:h-2 w-full bg-white/10 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${skill.level}%` }}
@@ -364,12 +466,12 @@ const About = () => {
                 variants={itemVariants}
                 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
               >
-                Мои услуги
+                {t('my_services')}
               </motion.h2>
               
               <motion.div 
                 variants={itemVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8"
               >
                 {services.map((service, index) => (
                   <motion.div 
@@ -378,9 +480,11 @@ const About = () => {
                     className="relative group"
                   >
                     <div className={`absolute -inset-0.5 bg-gradient-to-r ${service.gradient} rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]`}></div>
-                    <div className="relative bg-black/80 backdrop-blur-sm p-6 rounded-xl h-full">
-                      {service.icon}
-                      <h3 className={`text-xl font-bold my-3 bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
+                    <div className="relative bg-black/80 backdrop-blur-sm p-4 md:p-6 rounded-xl h-full">
+                      <div className="w-8 h-8 md:w-10 md:h-10">
+                        {React.cloneElement(service.icon, { className: "w-full h-full" })}
+                      </div>
+                      <h3 className={`text-lg md:text-xl font-bold my-2 md:my-3 bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
                         {service.title}
                       </h3>
                       <p className="text-white/70">
@@ -405,7 +509,7 @@ const About = () => {
                 variants={itemVariants}
                 className="text-3xl font-bold text-center bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"
               >
-                Прайс-лист
+                {t('prices')}
               </motion.h2>
               
               <motion.div 
@@ -422,25 +526,27 @@ const About = () => {
                     onClick={createParticles}
                   >
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                    <div className="relative bg-black/80 backdrop-blur-sm p-6 rounded-xl">
-                      <div className="flex items-start gap-4">
-                        {item.icon}
+                    <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
+                      <div className="flex items-start gap-2 md:gap-4">
+                        <div className="w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
+                          {React.cloneElement(item.icon, { className: "w-full h-full" })}
+                        </div>
                         <div>
                           <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-xl font-bold text-white/90">{item.title}</h3>
-                            <span className="text-lg font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                            <h3 className="text-base md:text-xl font-bold text-white/90">{item.title}</h3>
+                            <span className="text-base md:text-lg font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                               {formatCurrency(item.price, 'UAH')}
                             </span>
                           </div>
-                          <p className="text-white/70">{item.description}</p>
+                          <p className="text-xs md:text-base text-white/70">{item.description}</p>
                           {hoveredPrice === index && (
                             <motion.div 
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               className="mt-4 text-sm space-y-1"
                             >
-                              <p className="text-green-400">{formatCurrency(item.price * USD_RATE, 'USD')}</p>
-                              <p className="text-blue-400">{formatCurrency(item.price * EUR_RATE, 'EUR')}</p>
+                              <p className="text-xs md:text-sm text-green-400">{formatCurrency(item.price * USD_RATE, 'USD')}</p>
+                              <p className="text-xs md:text-sm text-blue-400">{formatCurrency(item.price * EUR_RATE, 'EUR')}</p>
                             </motion.div>
                           )}
                         </div>
@@ -452,19 +558,19 @@ const About = () => {
 
               {/* Секция поддержки */}
               <motion.div 
-                variants={itemVariants}
-                className="relative group mt-12"
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                <div className="relative bg-black/80 backdrop-blur-sm p-6 rounded-xl">
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-center md:text-left">
-                      <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
-                        Поддержите мою работу
-                      </h3>
+                    variants={itemVariants}
+                    className="relative group mt-12"
+                  >
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
+                    <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
+                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="text-center md:text-left">
+                          <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                            {t('support_work')}
+                          </h3>
                       <p className="text-white/70 max-w-md">
-                        Ваша поддержка помогает мне продолжать создавать качественный контент и разрабатывать новые проекты. Каждое пожертвование имеет значение!
-                      </p>
+                             {t('support_description')}
+                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-4">
                       <motion.a
