@@ -16,6 +16,14 @@
       "summary": "A deep dive into Brave Browser's history of controversies, including affiliate link scandals, crypto partnerships, and legal battles.",
       "tags": ["privacy", "browser", "crypto", "controversy"],
       "path": "brave.md"
+    },
+    {
+      "id": "virustotal",
+      "title": "Why VirusTotal Is Not the Ultimate Malware Scanner: A Deep Dive into Its Limitations",
+      "date": "2025-01-15",
+      "summary": "A technical analysis of VirusTotal's shortcomings through real-world case studies, emphasizing why it should never be the sole pillar of your threat detection strategy.",
+      "tags": ["cybersecurity", "malware", "analysis", "virustotal"],
+      "path": "virustotal.md"
     }
   ]
 }

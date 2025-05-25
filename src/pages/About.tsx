@@ -456,6 +456,7 @@ const About = () => {
 
           {/* Секция услуг */}
           {activeTab === 'services' && (
+            console.log('Rendering Services section, activeTab:', activeTab),
             <motion.div 
               initial="hidden"
               animate="visible"
@@ -499,6 +500,7 @@ const About = () => {
 
           {/* Секция прайс-листа */}
           {activeTab === 'prices' && (
+            console.log('Rendering Prices section, activeTab:', activeTab),
             <motion.div 
               initial="hidden"
               animate="visible"
