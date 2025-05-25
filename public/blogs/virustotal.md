@@ -1,6 +1,6 @@
 ```markdown
 # Why VirusTotal Is Not the Ultimate Malware Scanner: A Deep Dive into Its Limitations  
-*By [Your Name], Cybersecurity Analyst & Reverse Engineer*  
+*By Baneronetwo, Cybersecurity Analyst & Reverse Engineer*  
 
 ---
 
