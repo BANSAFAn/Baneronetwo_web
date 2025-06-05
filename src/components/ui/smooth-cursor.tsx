@@ -3,6 +3,7 @@
 
 import { motion, useSpring } from "framer-motion";
 import { FC, JSX, useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Position {
   x: number;
@@ -90,12 +91,21 @@ export function SmoothCursor({
     restDelta: 0.001,
   },
 }: SmoothCursorProps) {
+  const isMobile = useIsMobile();
+  
+  // Если это мобильное устройство, не рендерим курсор
+  if (isMobile) {
+    return null;
+  }
+  
   const [isMoving, setIsMoving] = useState(false);
   const lastMousePos = useRef<Position>({ x: 0, y: 0 });
   const velocity = useRef<Position>({ x: 0, y: 0 });
   const lastUpdateTime = useRef(Date.now());
   const previousAngle = useRef(0);
   const accumulatedRotation = useRef(0);
+  const rafId = useRef<number | null>(null);
+  const timeoutId = useRef<number | null>(null);
 
   const cursorX = useSpring(0, springConfig);
   const cursorY = useSpring(0, springConfig);
@@ -170,32 +180,36 @@ export function SmoothCursor({
         scale.set(0.95);
         setIsMoving(true);
 
-        const timeout = setTimeout(() => {
+        // Очищаем предыдущий таймаут, если он существует
+        if (timeoutId.current) {
+          clearTimeout(timeoutId.current);
+        }
+
+        timeoutId.current = window.setTimeout(() => {
           scale.set(1);
           setIsMoving(false);
+          timeoutId.current = null;
         }, 150);
-
-        return () => clearTimeout(timeout);
       }
     };
 
-    let rafId: number;
     const throttledMouseMove = (e: MouseEvent) => {
-      if (rafId) return;
+      if (rafId.current) return;
 
-      rafId = requestAnimationFrame(() => {
+      rafId.current = requestAnimationFrame(() => {
         smoothMouseMove(e);
-        rafId = 0;
+        rafId.current = null;
       });
     };
 
     document.body.style.cursor = "none";
-    window.addEventListener("mousemove", throttledMouseMove);
+    window.addEventListener("mousemove", throttledMouseMove, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", throttledMouseMove);
       document.body.style.cursor = "auto";
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      if (timeoutId.current) clearTimeout(timeoutId.current);
     };
   }, [cursorX, cursorY, rotation, scale]);
 

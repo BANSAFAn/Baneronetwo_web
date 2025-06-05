@@ -29,18 +29,68 @@ export default function Blog() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('/blogs.json');
-        const data: BlogsData = await response.json();
+        // Проверяем, есть ли кэшированные данные в localStorage
+        const cachedData = localStorage.getItem('blogsData');
+        const cacheTimestamp = localStorage.getItem('blogsDataTimestamp');
+        const now = Date.now();
+        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
         
-        setBlogs(data.blogs);
+        // Используем кэш, если он существует и не старше 1 часа (3600000 мс)
+        if (cachedData && cacheAge < 3600000) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            setBlogs(parsedData.blogs);
+            
+            // Extract unique tags
+            const tags = parsedData.blogs.flatMap(blog => blog.tags);
+            setAllTags([...new Set(tags)]);
+            
+            setIsLoading(false);
+            console.log('Используются кэшированные данные блогов');
+            return;
+          } catch (parseError) {
+            console.error('Ошибка при разборе кэшированных данных блогов:', parseError);
+            // Если ошибка парсинга, продолжаем загрузку с сервера
+          }
+        }
         
-        // Extract unique tags
-        const tags = data.blogs.flatMap(blog => blog.tags);
-        setAllTags([...new Set(tags)]);
+        // Добавляем обработку ошибок сети и ограничение времени запроса
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд таймаут
         
-        setIsLoading(false);
+        const response = await fetch('/blogs.json', {
+          signal: controller.signal,
+          cache: 'no-store' // Отключаем кэширование браузера для получения свежих данных
+        });
+        
+        clearTimeout(timeoutId); // Очищаем таймаут
+        
+        if (response.ok) {
+          const data: BlogsData = await response.json();
+          
+          // Кэшируем результаты
+          try {
+            localStorage.setItem('blogsData', JSON.stringify(data));
+            localStorage.setItem('blogsDataTimestamp', now.toString());
+          } catch (cacheError) {
+            console.error('Ошибка при кэшировании данных блогов:', cacheError);
+          }
+          
+          setBlogs(data.blogs);
+          
+          // Extract unique tags
+          const tags = data.blogs.flatMap(blog => blog.tags);
+          setAllTags([...new Set(tags)]);
+        } else {
+          console.error('Ошибка при загрузке блогов:', response.status, response.statusText);
+        }
       } catch (error) {
-        console.error('Error fetching blogs:', error);
+        if (error.name === 'AbortError') {
+          console.error('Таймаут при загрузке блогов');
+        } else {
+          console.error('Ошибка при загрузке блогов:', error);
+        }
+      } finally {
         setIsLoading(false);
       }
     };

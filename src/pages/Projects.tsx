@@ -48,34 +48,144 @@ const Projects = () => {
     // Fetch user's repositories
     const fetchRepos = async () => {
       try {
-        const response = await fetch(`https://api.github.com/users/${username}/repos`);
+        // Проверяем, есть ли кэшированные данные в localStorage
+        const cachedData = localStorage.getItem('userRepos');
+        const cacheTimestamp = localStorage.getItem('userReposTimestamp');
+        const now = Date.now();
+        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
+        
+        // Используем кэш, если он существует и не старше 1 часа (3600000 мс)
+        if (cachedData && cacheAge < 3600000) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            setRepositories(parsedData);
+            console.log('Используются кэшированные данные о пользовательских репозиториях');
+            return;
+          } catch (parseError) {
+            console.error('Ошибка при разборе кэшированных данных:', parseError);
+            // Если ошибка парсинга, продолжаем загрузку с API
+          }
+        }
+        
+        // Добавляем обработку ошибок сети и ограничение времени запроса
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+        
+        const response = await fetch(`https://api.github.com/users/${username}/repos`, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        
+        clearTimeout(timeoutId); // Очищаем таймаут
+        
+        if (response.status === 403) {
+          // Проверяем, не превышен ли лимит запросов
+          const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining');
+          if (rateLimitRemaining === '0') {
+            console.warn('GitHub API rate limit exceeded');
+            throw new Error('Rate limit exceeded');
+          }
+        }
+        
         if (response.ok) {
           const data = await response.json();
+          
+          // Кэшируем результаты
+          try {
+            localStorage.setItem('userRepos', JSON.stringify(data));
+            localStorage.setItem('userReposTimestamp', now.toString());
+          } catch (cacheError) {
+            console.error('Ошибка при кэшировании данных:', cacheError);
+          }
+          
           setRepositories(data);
+        } else {
+          console.error('Error fetching repositories:', response.status, response.statusText);
         }
       } catch (error) {
-        console.error('Error fetching repositories:', error);
+        if (error.name === 'AbortError') {
+          console.error('Timeout fetching user repositories');
+        } else {
+          console.error('Error fetching repositories:', error);
+        }
       }
     };
 
     // Fetch contributed repositories
     const fetchContributedRepos = async () => {
       try {
+        // Проверяем, есть ли кэшированные данные в localStorage
+        const cachedData = localStorage.getItem('contributedRepos');
+        const cacheTimestamp = localStorage.getItem('contributedReposTimestamp');
+        const now = Date.now();
+        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
+        
+        // Используем кэш, если он существует и не старше 1 часа (3600000 мс)
+        if (cachedData && cacheAge < 3600000) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            setContributedRepos(parsedData);
+            setLoading(false);
+            console.log('Используются кэшированные данные о репозиториях');
+            return;
+          } catch (parseError) {
+            console.error('Ошибка при разборе кэшированных данных:', parseError);
+            // Если ошибка парсинга, продолжаем загрузку с API
+          }
+        }
+        
+        // Добавляем обработку ошибок сети и ограничение времени запроса
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+        
         const fetchPromises = contributedRepoUrls.map(async (repoPath) => {
           try {
-            const response = await fetch(`https://api.github.com/repos/${repoPath}`);
+            const response = await fetch(`https://api.github.com/repos/${repoPath}`, {
+              signal: controller.signal,
+              headers: {
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            });
+            
+            if (response.status === 403) {
+              // Проверяем, не превышен ли лимит запросов
+              const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining');
+              if (rateLimitRemaining === '0') {
+                console.warn('GitHub API rate limit exceeded');
+                throw new Error('Rate limit exceeded');
+              }
+            }
+            
             if (response.ok) {
               return await response.json();
             }
             return null;
           } catch (error) {
-            console.error(`Error fetching repo ${repoPath}:`, error);
+            if (error.name === 'AbortError') {
+              console.error(`Timeout fetching repo ${repoPath}`);
+            } else {
+              console.error(`Error fetching repo ${repoPath}:`, error);
+            }
             return null;
           }
         });
 
+        clearTimeout(timeoutId); // Очищаем таймаут
+
         const results = await Promise.all(fetchPromises);
-        setContributedRepos(results.filter(repo => repo !== null));
+        const filteredResults = results.filter(repo => repo !== null);
+        
+        // Кэшируем результаты
+        try {
+          localStorage.setItem('contributedRepos', JSON.stringify(filteredResults));
+          localStorage.setItem('contributedReposTimestamp', now.toString());
+        } catch (cacheError) {
+          console.error('Ошибка при кэшировании данных:', cacheError);
+        }
+        
+        setContributedRepos(filteredResults);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching contributed repositories:', error);

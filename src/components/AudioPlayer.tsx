@@ -270,18 +270,30 @@ export const AudioPlayer = () => {
           musicFiles.push(`/music/parampam (${i}).mp3`);
         }
         
-        // Проверяем наличие файлов
-        for (const track of musicFiles) {
+        // Используем Promise.all для параллельной проверки файлов
+        const checkPromises = musicFiles.map(async (track) => {
           try {
-            const response = await fetch(track, { method: 'HEAD' });
+            const response = await fetch(track, { 
+              method: 'HEAD',
+              // Добавляем cache: 'no-store' для предотвращения кэширования
+              cache: 'no-store'
+            });
             if (response.ok) {
-              validTracks.push(track);
-              console.log(`Найден трек: ${track}`);
+              return track;
             }
+            return null;
           } catch (err) {
             console.log(`Трек ${track} не найден:`, err);
+            return null;
           }
-        }
+        });
+        
+        // Ждем завершения всех проверок и фильтруем null значения
+        const results = await Promise.all(checkPromises);
+        const filteredTracks = results.filter(track => track !== null) as string[];
+        
+        validTracks.push(...filteredTracks);
+        console.log(`Найдено ${validTracks.length} треков`);
         
         // Если файлы не найдены, добавим демо-трек для тестирования
         if (validTracks.length === 0) {
@@ -316,6 +328,11 @@ export const AudioPlayer = () => {
         }
       } catch (err) {
         console.error('Error loading tracks:', err);
+        toast({
+          title: "Ошибка загрузки музыки",
+          description: "Произошла ошибка при поиске музыкальных файлов",
+          variant: "destructive"
+        });
       }
     };
     

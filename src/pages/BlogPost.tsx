@@ -257,30 +257,133 @@ export default function BlogPost() {
     const fetchBlogData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/blogs.json');
-        const data: BlogsData = await response.json();
         
-        const foundBlog = data.blogs.find(blog => blog.id === id);
+        // Проверяем, есть ли кэшированные данные в localStorage
+        const cachedMetadata = localStorage.getItem('blogsData');
+        const cacheTimestamp = localStorage.getItem('blogsDataTimestamp');
+        const now = Date.now();
+        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
         
-        if (foundBlog) {
-          setBlog(foundBlog);
+        let foundBlog: BlogPost | undefined;
+        
+        // Используем кэш для метаданных, если он существует и не старше 1 часа (3600000 мс)
+        if (cachedMetadata && cacheAge < 3600000) {
+          try {
+            const parsedData = JSON.parse(cachedMetadata);
+            foundBlog = parsedData.blogs.find((blog: BlogPost) => blog.id === id);
+            
+            if (foundBlog) {
+              setBlog(foundBlog);
+              console.log('Используются кэшированные метаданные блога');
+            }
+          } catch (parseError) {
+            console.error('Ошибка при разборе кэшированных данных блогов:', parseError);
+            // Если ошибка парсинга, продолжаем загрузку с сервера
+          }
+        }
+        
+        // Если блог не найден в кэше, загружаем метаданные с сервера
+        if (!foundBlog) {
+          // Добавляем обработку ошибок сети и ограничение времени запроса
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд таймаут
           
-          // Then fetch the actual content from the markdown file
-          const contentResponse = await fetch(`/blogs/${foundBlog.path}`);
+          const response = await fetch('/blogs.json', {
+            signal: controller.signal,
+            cache: 'no-store' // Отключаем кэширование браузера для получения свежих данных
+          });
+          
+          clearTimeout(timeoutId); // Очищаем таймаут
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch blog metadata: ${response.status}`);
+          }
+          
+          const data: BlogsData = await response.json();
+          
+          // Кэшируем результаты
+          try {
+            localStorage.setItem('blogsData', JSON.stringify(data));
+            localStorage.setItem('blogsDataTimestamp', now.toString());
+          } catch (cacheError) {
+            console.error('Ошибка при кэшировании данных блогов:', cacheError);
+          }
+          
+          foundBlog = data.blogs.find(blog => blog.id === id);
+          
+          if (foundBlog) {
+            setBlog(foundBlog);
+          } else {
+            setError('Blog post not found');
+            setIsLoading(false);
+            return;
+          }
+        }
+        
+        // Проверяем кэш для содержимого блога
+        const contentCacheKey = `blogContent_${id}`;
+        const cachedContent = localStorage.getItem(contentCacheKey);
+        const contentTimestamp = localStorage.getItem(`${contentCacheKey}_timestamp`);
+        const contentAge = contentTimestamp ? now - parseInt(contentTimestamp) : Infinity;
+        
+        // Используем кэш для содержимого, если он существует и не старше 1 дня (86400000 мс)
+        if (cachedContent && contentAge < 86400000) {
+          try {
+            setContent(cachedContent);
+            setIsLoading(false);
+            console.log('Используется кэшированное содержимое блога');
+            return;
+          } catch (contentError) {
+            console.error('Ошибка при использовании кэшированного содержимого:', contentError);
+          }
+        }
+        
+        // Загружаем содержимое блога
+        const contentController = new AbortController();
+        const contentTimeoutId = setTimeout(() => contentController.abort(), 10000); // 10 секунд таймаут
+        
+        try {
+          const contentResponse = await fetch(`/blogs/${foundBlog.path}`, {
+            signal: contentController.signal,
+            cache: 'no-store'
+          });
+          
+          clearTimeout(contentTimeoutId);
+          
           if (!contentResponse.ok) {
             throw new Error(`Failed to fetch blog content: ${contentResponse.status}`);
           }
           
           const contentText = await contentResponse.text();
+          
+          // Кэшируем содержимое блога
+          try {
+            localStorage.setItem(contentCacheKey, contentText);
+            localStorage.setItem(`${contentCacheKey}_timestamp`, now.toString());
+          } catch (contentCacheError) {
+            console.error('Ошибка при кэшировании содержимого блога:', contentCacheError);
+          }
+          
           setContent(contentText);
-        } else {
-          setError('Blog post not found');
+        } catch (contentError) {
+          if (contentError.name === 'AbortError') {
+            console.error('Таймаут при загрузке содержимого блога');
+            setError('Timeout loading blog content');
+          } else {
+            console.error('Ошибка при загрузке содержимого блога:', contentError);
+            setError('Failed to load blog content');
+          }
         }
         
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching blog:', error);
-        setError('Failed to load blog post');
+        if (error.name === 'AbortError') {
+          console.error('Таймаут при загрузке данных блога');
+          setError('Timeout loading blog data');
+        } else {
+          console.error('Ошибка при загрузке блога:', error);
+          setError('Failed to load blog post');
+        }
         setIsLoading(false);
       }
     };

@@ -1,10 +1,12 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Apple, Terminal, LoaderCircle } from 'lucide-react';
 import { detectOS, OperatingSystem } from '@/utils/osDetection';
 import { useLanguage } from '@/context/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const LoadingScreen = () => {
+  const isMobile = useIsMobile();
   const [fadeOut, setFadeOut] = useState(false);
   const [progress, setProgress] = useState(0);
   const [glitch, setGlitch] = useState(false);
@@ -16,16 +18,45 @@ export const LoadingScreen = () => {
   const [appleClicked, setAppleClicked] = useState(false);
   const [androidConsoleLines, setAndroidConsoleLines] = useState<string[]>([]);
   const { t } = useLanguage();
+  
+  // Используем useRef для хранения идентификаторов интервалов и таймеров
+  const intervalsRef = useRef<number[]>([]);
+  const timersRef = useRef<number[]>([]);
+
+  // Функция для добавления интервала в ref
+  const addInterval = (id: number) => {
+    intervalsRef.current.push(id);
+  };
+
+  // Функция для добавления таймера в ref
+  const addTimer = (id: number) => {
+    timersRef.current.push(id);
+  };
+
+  // Функция для очистки всех интервалов и таймеров
+  const clearAllTimers = () => {
+    intervalsRef.current.forEach(clearInterval);
+    timersRef.current.forEach(clearTimeout);
+    intervalsRef.current = [];
+    timersRef.current = [];
+  };
 
   useEffect(() => {
     // Detect OS
     const detectedOS = detectOS();
     setOs(detectedOS);
 
+    // Упрощенная версия для мобильных устройств
+    if (isMobile) {
+      simplifiedMobileLoading();
+      return;
+    }
+
     // OS-specific initializations
     if (detectedOS === 'Linux') {
       setShowLinuxMessage(true);
-      setTimeout(() => setFadeOut(true), 3000);
+      const timerId = window.setTimeout(() => setFadeOut(true), 3000);
+      addTimer(timerId);
     } else if (detectedOS === 'MacOS') {
       setShowAppleIcon(true);
     } else if (detectedOS === 'Android') {
@@ -34,11 +65,44 @@ export const LoadingScreen = () => {
       // Default loading behavior for other OS
       defaultLoadingBehavior();
     }
-  }, []);
+
+    // Очистка всех таймеров и интервалов при размонтировании
+    return clearAllTimers;
+  }, [isMobile]);
+
+  // Упрощенная версия загрузки для мобильных устройств
+  const simplifiedMobileLoading = () => {
+    // Простая анимация прогресса без сложных эффектов
+    const progressInterval = window.setInterval(() => {
+      setProgress(prev => {
+        const nextProgress = prev + 5;
+        return nextProgress > 100 ? 100 : nextProgress;
+      });
+    }, 100);
+    addInterval(progressInterval);
+
+    // Простой текст загрузки
+    setText(t('loading'));
+    
+    // Анимация точек
+    const dotsInterval = window.setInterval(() => {
+      setDots(prev => prev.length < 3 ? prev + '.' : '');
+    }, 300);
+    addInterval(dotsInterval);
+    
+    // Быстрее скрываем экран загрузки на мобильных устройствах
+    const timerId = window.setTimeout(() => setFadeOut(true), 2000);
+    addTimer(timerId);
+  };
 
   // Android console simulation
   const startAndroidConsole = () => {
-    const consoleLines = [
+    // Уменьшаем количество строк для мобильных устройств
+    const consoleLines = isMobile ? [
+      '> Starting Android shell...',
+      '> Loading system resources...',
+      '> Starting app initialization...'
+    ] : [
       '> Starting Android shell...',
       '> adb devices',
       '> List of devices attached',
@@ -53,37 +117,44 @@ export const LoadingScreen = () => {
     ];
 
     let index = 0;
-    const intervalId = setInterval(() => {
+    const intervalId = window.setInterval(() => {
       if (index < consoleLines.length) {
         setAndroidConsoleLines(prev => [...prev, consoleLines[index]]);
         index++;
       } else {
         clearInterval(intervalId);
-        setTimeout(() => {
+        const timerId = window.setTimeout(() => {
           setGlitch(true);
-          setTimeout(() => setFadeOut(true), 1000);
+          const fadeTimerId = window.setTimeout(() => setFadeOut(true), 1000);
+          addTimer(fadeTimerId);
         }, 1500);
+        addTimer(timerId);
       }
-    }, 800);
-
-    return () => clearInterval(intervalId);
+    }, isMobile ? 400 : 800);
+    addInterval(intervalId);
   };
 
   // Default loading screen behavior
   const defaultLoadingBehavior = () => {
     // Progressively increase loading value
-    const progressInterval = setInterval(() => {
+    const progressInterval = window.setInterval(() => {
       setProgress(prev => {
         const nextProgress = prev + Math.random() * 15;
         return nextProgress > 100 ? 100 : nextProgress;
       });
     }, 200);
+    addInterval(progressInterval);
 
     // Create glitch effect periodically
-    const glitchInterval = setInterval(() => {
-      setGlitch(true);
-      setTimeout(() => setGlitch(false), 150);
-    }, 2000);
+    // Уменьшаем частоту глитч-эффекта для мобильных устройств
+    if (!isMobile) {
+      const glitchInterval = window.setInterval(() => {
+        setGlitch(true);
+        const timerId = window.setTimeout(() => setGlitch(false), 150);
+        addTimer(timerId);
+      }, 2000);
+      addInterval(glitchInterval);
+    }
 
     // Update loading text
     const textMessages = [
@@ -96,32 +167,28 @@ export const LoadingScreen = () => {
     ];
     
     let currentTextIndex = 0;
-    const textInterval = setInterval(() => {
+    const textInterval = window.setInterval(() => {
       currentTextIndex = (currentTextIndex + 1) % textMessages.length;
       setText(textMessages[currentTextIndex]);
     }, 1500);
+    addInterval(textInterval);
     
     // Animate dots
-    const dotsInterval = setInterval(() => {
+    const dotsInterval = window.setInterval(() => {
       setDots(prev => prev.length < 3 ? prev + '.' : '');
     }, 300);
+    addInterval(dotsInterval);
     
-    const timer = setTimeout(() => setFadeOut(true), 3000);
-    
-    return () => {
-      clearTimeout(timer);
-      clearInterval(progressInterval);
-      clearInterval(glitchInterval);
-      clearInterval(textInterval);
-      clearInterval(dotsInterval);
-    };
+    const timerId = window.setTimeout(() => setFadeOut(true), 3000);
+    addTimer(timerId);
   };
 
   // Handle Apple icon click for MacOS
   const handleAppleClick = () => {
     setAppleClicked(true);
     setGlitch(true);
-    setTimeout(() => setFadeOut(true), 1000);
+    const timerId = window.setTimeout(() => setFadeOut(true), 1000);
+    addTimer(timerId);
   };
 
   // Render different loading screens based on OS
@@ -185,6 +252,34 @@ export const LoadingScreen = () => {
     );
   }
 
+  // Упрощенный экран загрузки для мобильных устройств
+  if (isMobile) {
+    return (
+      <div 
+        className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 z-50 bg-black ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <div className="relative z-10 w-full max-w-sm px-4">
+          <div className="text-4xl font-bold text-white text-center mb-8">
+            <span className="relative bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent animate-pulse">
+              Baneronetwo
+            </span>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-md h-2 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          
+          <div className="text-white/70 text-sm mt-4 font-mono text-center">
+            {text}{dots}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Default loading screen for other OS
   return (
     <div 
@@ -228,9 +323,9 @@ export const LoadingScreen = () => {
           {text}{dots}
         </div>
         
-        {/* Simulate typing effect for "hacking" feel */}
+        {/* Simulate typing effect for "hacking" feel - ограничиваем количество элементов */}
         <div className="mt-8 font-mono text-xs text-green-500 opacity-70 max-h-32 overflow-hidden">
-          {Array.from({ length: Math.ceil(progress / 10) }).map((_, i) => (
+          {Array.from({ length: Math.min(5, Math.ceil(progress / 10)) }).map((_, i) => (
             <div key={i} className="mb-1">
               &gt; {randomHackingText()} <span className="animate-ping">_</span>
             </div>
@@ -238,10 +333,10 @@ export const LoadingScreen = () => {
         </div>
       </div>
       
-      {/* Random matrix-like characters */}
+      {/* Random matrix-like characters - уменьшаем количество элементов */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         <div className="matrix-rain">
-          {Array.from({ length: 50 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 15 : 50 }).map((_, i) => (
             <div 
               key={i}
               className="absolute text-green-400 opacity-70 font-mono text-xs"
@@ -288,7 +383,8 @@ function randomHackingText() {
 function randomMatrixChars() {
   const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン1234567890";
   let result = '';
-  const length = Math.floor(Math.random() * 10) + 5;
+  // Уменьшаем длину строки для оптимизации
+  const length = Math.floor(Math.random() * 5) + 3;
   
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
