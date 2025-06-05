@@ -160,7 +160,7 @@ export const SocialLinks = () => {
   ];
 
   return (
-    <div className={`flex gap-6 ${isMobile ? 'flex-wrap justify-center' : 'justify-center'} mt-8 px-4`}>
+    <div className={`flex gap-3 md:gap-6 ${isMobile ? 'flex-wrap justify-center' : 'justify-center'} mt-4 md:mt-8 px-2 md:px-4`}>
       {socials.map((social, index) => {
         const Icon = social.icon;
         return (
@@ -171,14 +171,17 @@ export const SocialLinks = () => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => {
-              e.preventDefault();
-              createParticles(e, social.color);
-              createParticleStream(e, social.color, social.emoji);
-              
-              // Имитация задержки перед переходом по ссылке для показа анимации
-              setTimeout(() => {
-                window.open(social.href, '_blank');
-              }, 300);
+              // На мобильных устройствах отключаем анимацию частиц для повышения производительности
+              if (!isMobile) {
+                e.preventDefault();
+                createParticles(e, social.color);
+                createParticleStream(e, social.color, social.emoji);
+                
+                // Имитация задержки перед переходом по ссылке для показа анимации
+                setTimeout(() => {
+                  window.open(social.href, '_blank');
+                }, 300);
+              }
             }}
             aria-label={social.label}
           >
@@ -189,15 +192,18 @@ export const SocialLinks = () => {
                 transform: 'scale(1.5)'
               }}
             />
-            <div className="relative p-3 bg-black/30 backdrop-blur-md rounded-full border border-white/10 transition-all duration-300 hover:scale-110">
+            <div className="relative p-2 md:p-3 bg-black/30 backdrop-blur-md rounded-full border border-white/10 transition-all duration-300 hover:scale-110">
               <Icon
-                className={`w-6 h-6 transition-all duration-500 hover:scale-110 group-hover:${social.animation}`}
+                className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-500 hover:scale-110 ${!isMobile ? `group-hover:${social.animation}` : ''}`}
                 style={{ color: social.color }}
               />
               
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                {social.label}
-              </div>
+              {/* Скрываем всплывающие подсказки на мобильных устройствах */}
+              {!isMobile && (
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  {social.label}
+                </div>
+              )}
             </div>
           </a>
         );

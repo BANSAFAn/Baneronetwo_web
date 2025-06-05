@@ -252,3 +252,87 @@ a,
 .cursor-none {
   cursor: none;
 }
+
+/* Firefox-specific styles */
+@-moz-document url-prefix() {
+  /* Улучшение производительности анимаций в Firefox */
+  .animate-gradient,
+  .animate-float,
+  .animate-fade-in,
+  .glitch-effect,
+  .float-in,
+  .float-in-delayed {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  
+  /* Исправление отображения градиентов в Firefox */
+  .bg-gradient-to-r,
+  .bg-gradient-to-br,
+  .bg-gradient-to-bl {
+    background-attachment: fixed;
+  }
+  
+  /* Улучшение плавности скроллинга */
+  html, body {
+    scrollbar-width: thin;
+    scrollbar-color: #444 #000;
+  }
+}
+
+/* Улучшенные стили для мобильных устройств */
+@media (max-width: 768px) {
+  /* Увеличение размера интерактивных элементов для лучшего взаимодействия на тачскринах */
+  button, 
+  a,
+  [role="button"],
+  .cursor-none {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px;
+    touch-action: manipulation;
+  }
+  
+  /* Отключение кастомного курсора на мобильных устройствах */
+  body {
+    cursor: auto;
+  }
+  
+  /* Улучшение читаемости текста на мобильных устройствах */
+  p, li, span {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  /* Оптимизация размеров заголовков */
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  /* Улучшение отступов для лучшей читаемости */
+  .space-y-8 {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Оптимизация сетки для мобильных устройств */
+  .grid {
+    gap: 1rem;
+  }
+}
+
+/* Оптимизация для устройств с высоким DPI */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}

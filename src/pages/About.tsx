@@ -31,14 +31,17 @@ const About = () => {
   
   // Определяем стили для мобильных устройств
   const mobileStyles = {
-    cardPadding: "p-4",
-    textSize: "text-sm",
-    headingSize: "text-2xl",
-    iconSize: "w-6 h-6",
-    gridGap: "gap-3",
-    sectionSpacing: "space-y-8",
+    cardPadding: "p-3 md:p-4",
+    textSize: "text-sm md:text-base",
+    headingSize: "text-xl md:text-2xl",
+    iconSize: "w-5 h-5 md:w-6 md:h-6",
+    gridGap: "gap-2 md:gap-3",
+    sectionSpacing: "space-y-6 md:space-y-8",
+    buttonPadding: "px-2 py-1 md:px-3 md:py-2",
+    imageSize: "w-6 h-6 md:w-8 md:h-8",
+    borderRadius: "rounded-lg md:rounded-xl",
+    margin: "mb-2 md:mb-4"
   };
-
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -334,9 +337,9 @@ const About = () => {
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`px-3 md:px-4 py-1 md:py-2 rounded-md transition-all duration-300 ${activeTab === tab 
+                className={`${mobileStyles.buttonPadding} rounded-md transition-all duration-300 ${activeTab === tab 
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-600/20' 
-                  : 'text-white/70 hover:text-white hover:bg-white/10'} min-w-[70px] md:min-w-[80px] text-center text-sm md:text-base relative overflow-hidden`}
+                  : 'text-white/70 hover:text-white hover:bg-white/10'} min-w-[60px] md:min-w-[80px] text-center ${mobileStyles.textSize} relative overflow-hidden`}
               >
                 {activeTab === tab && (
                   <motion.div 
@@ -357,248 +360,184 @@ const About = () => {
 
           {/* Секция навыков */}
           {activeTab === 'skills' && (
-            <motion.div 
+            <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="w-full space-y-12"
+              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
             >
-              <motion.h2 
-                variants={itemVariants}
-                className="text-3xl font-bold text-center bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent"
-              >
-                {t('my_skills')}
-              </motion.h2>
-              
-              {/* Языки программирования */}
-              <motion.div variants={itemVariants} className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0EA5E9] via-[#8B5CF6] to-[#D946EF] rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
-                  <h3 className="text-xl font-bold mb-6 text-center">{t('programming_languages')}</h3>
-                  <div className="flex flex-wrap justify-center gap-2 md:gap-6 py-2 md:py-4">
-                    {programmingLanguages.map((lang) => (
-                      <div key={lang.value} className="relative group">
-                        <motion.div
-                          whileHover={{ scale: 1.1 }}
-                          className="flex flex-col items-center"
-                          onMouseEnter={() => setHoveredSkill(lang.value)}
-                          onMouseLeave={() => setHoveredSkill(null)}
-                        >
-                          <motion.div 
-                            className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center mb-1 md:mb-2 transition-all duration-300"
-                            style={{
-                              filter: hoveredSkill === lang.value 
-                                ? `drop-shadow(0 0 12px ${lang.color})` 
-                                : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))'
-                            }}
-                            whileHover={logoAnimations.hover(lang.color)}
-                            whileTap={logoAnimations.tap}
-                            animate={{
-                              rotate: hoveredSkill === lang.value ? [0, -5, 5, -5, 0] : 0,
-                              transition: { duration: 0.5, ease: "easeInOut" }
-                            }}
-                          >
-                            <img 
-                              src={lang.logo} 
-                              alt={lang.value}
-                              className="w-8 h-8 md:w-12 md:h-12 object-contain"
-                            />
-                          </motion.div>
-                          <span className="text-sm font-medium">{lang.value}</span>
-                        </motion.div>
-                        
-                        {/* Всплывающая подсказка с описанием языка */}
-                        {hoveredSkill === lang.value && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 rounded-lg bg-black/90 backdrop-blur-md border border-white/10 shadow-xl"
-                          >
-                            <div className="text-xs md:text-sm text-white/90">{lang.description}</div>
-                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-black/90 border-r border-b border-white/10"></div>
-                          </motion.div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-              
-              {/* Шкалы навыков */}
-              <motion.div variants={itemVariants} className="space-y-6">
-                {skills.map((skill, index) => (
-                  <motion.div 
-                    key={skill.name}
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 + 0.5, duration: 0.5 }}
-                    className="space-y-2"
-                  >
-                    <div className="flex justify-between">
-                      <span className="text-sm md:text-base font-medium">{skill.name}</span>
-                      <span className="text-sm md:text-base text-white/60">{skill.level}%</span>
+              {/* Карточки языков программирования */}
+              {programmingLanguages.map((lang, index) => (
+                <motion.div
+                  key={lang.name}
+                  variants={itemVariants}
+                  custom={index}
+                  className={`${mobileStyles.cardPadding} bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-300 relative overflow-hidden group`}
+                  onMouseEnter={() => setHoveredSkill(lang.name)}
+                  onMouseLeave={() => setHoveredSkill(null)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={lang.logo} 
+                        alt={lang.name} 
+                        className={`${mobileStyles.imageSize} object-contain transition-all duration-300 group-hover:scale-110`} 
+                      />
+                      <h3 className={`${mobileStyles.headingSize} font-bold text-white`}>{lang.name}</h3>
                     </div>
-                    <div className="h-1.5 md:h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="w-24 bg-gray-700 h-2 rounded-full overflow-hidden">
                       <motion.div 
+                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
                         initial={{ width: 0 }}
-                        animate={{ width: `${skill.level}%` }}
-                        transition={{ delay: index * 0.1 + 0.7, duration: 0.8, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: skill.color }}
+                        animate={{ width: `${lang.level}%` }}
+                        transition={{ duration: 1, delay: index * 0.1 }}
                       />
                     </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+                  </div>
+                  
+                  {/* Описание языка программирования */}
+                  {hoveredSkill === lang.name && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className={`mt-3 ${mobileStyles.textSize} text-white/80`}
+                    >
+                      {t(`languages.${lang.name.toLowerCase()}.description`)}
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+
+              {/* Карточки навыков */}
+              {skills.map((skill, index) => (
+                <motion.div
+                  key={skill.name}
+                  variants={itemVariants}
+                  custom={index + programmingLanguages.length}
+                  className={`${mobileStyles.cardPadding} bg-white/5 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 transition-all duration-300`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`${mobileStyles.iconSize} text-white`}>{skill.icon}</div>
+                    <h3 className={`${mobileStyles.headingSize} font-bold text-white`}>{t(`skills.${skill.name}`)}</h3>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           )}
 
           {/* Секция услуг */}
           {activeTab === 'services' && (
-            console.log('Rendering Services section, activeTab:', activeTab),
-            <motion.div 
+            <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="w-full space-y-12"
+              className={`grid grid-cols-1 sm:grid-cols-2 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
             >
-              <motion.h2 
-                variants={itemVariants}
-                className="text-3xl font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
-              >
-                {t('my_services')}
-              </motion.h2>
-              
-              <motion.div 
-                variants={itemVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8"
-              >
-                {services.map((service, index) => (
-                  <motion.div 
-                    key={service.title}
-                    whileHover={{ y: -5 }}
-                    className="relative group"
-                  >
-                    <div className={`absolute -inset-0.5 bg-gradient-to-r ${service.gradient} rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]`}></div>
-                    <div className="relative bg-black/80 backdrop-blur-sm p-4 md:p-6 rounded-xl h-full">
-                      <div className="w-8 h-8 md:w-10 md:h-10">
-                        {React.cloneElement(service.icon, { className: "w-full h-full" })}
-                      </div>
-                      <h3 className={`text-lg md:text-xl font-bold my-2 md:my-3 bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
-                        {service.title}
-                      </h3>
-                      <p className="text-white/70">
-                        {service.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+              {services.map((service, index) => (
+                <motion.div
+                  key={service.name}
+                  variants={itemVariants}
+                  custom={index}
+                  className={`${mobileStyles.cardPadding} bg-white/5 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 transition-all duration-300 border border-white/10`}
+                >
+                  <div className="flex items-center space-x-3 ${mobileStyles.margin}">
+                    <div className={`${mobileStyles.iconSize} text-white`}>{service.icon}</div>
+                    <h3 className={`${mobileStyles.headingSize} font-bold text-white`}>{t(`services.${service.name}.title`)}</h3>
+                  </div>
+                  <p className={`mt-2 ${mobileStyles.textSize} text-white/80`}>{t(`services.${service.name}.description`)}</p>
+                </motion.div>
+              ))}
             </motion.div>
           )}
 
           {/* Секция прайс-листа */}
           {activeTab === 'prices' && (
-            console.log('Rendering Prices section, activeTab:', activeTab),
-            <motion.div 
+            <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="w-full space-y-12"
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
             >
-              <motion.h2 
-                variants={itemVariants}
-                className="text-3xl font-bold text-center bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"
-              >
-                {t('prices')}
-              </motion.h2>
-              
-              <motion.div 
-                variants={itemVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              >
-                {priceList.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.03 }}
-                    className="relative group"
-                    onMouseEnter={() => setHoveredPrice(index)}
-                    onMouseLeave={() => setHoveredPrice(null)}
-                    onClick={createParticles}
-                  >
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                    <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
-                      <div className="flex items-start gap-2 md:gap-4">
-                        <div className="w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
-                          {React.cloneElement(item.icon, { className: "w-full h-full" })}
-                        </div>
-                        <div>
-                          <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-base md:text-xl font-bold text-white/90">{item.title}</h3>
-                            <span className="text-base md:text-lg font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                              {formatCurrency(item.price, 'UAH')}
-                            </span>
-                          </div>
-                          <p className="text-xs md:text-base text-white/70">{item.description}</p>
-                          {hoveredPrice === index && (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="mt-4 text-sm space-y-1"
-                            >
-                              <p className="text-xs md:text-sm text-green-400">{formatCurrency(item.price * USD_RATE, 'USD')}</p>
-                              <p className="text-xs md:text-sm text-blue-400">{formatCurrency(item.price * EUR_RATE, 'EUR')}</p>
-                            </motion.div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              {/* Секция поддержки */}
-              <motion.div 
-                    variants={itemVariants}
-                    className="relative group mt-12"
-                  >
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-gradient bg-[length:200%_auto]"></div>
-                    <div className="relative bg-black/80 backdrop-blur-sm p-3 md:p-6 rounded-xl">
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="text-center md:text-left">
-                          <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
-                            {t('support_work')}
-                          </h3>
-                      <p className="text-white/70 max-w-md">
-                             {t('support_description')}
-                       </p>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-4">
-                      <motion.a
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        href="https://ko-fi.com/baneronetwo"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 transition-all duration-300"
-                      >
-                        <Heart className="w-5 h-5 text-pink-400" />
-                        <span>Ko-fi</span>
-                      </motion.a>
-                      <motion.a
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        href="https://youtube.com/@baneronetwo"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-500/20 to-orange-500/20 hover:from-red-500/30 hover:to-orange-500/30 border border-red-500/30 transition-all duration-300"
-                      >
-                        <Youtube className="w-5 h-5 text-red-400" />
-                        <span>YouTube</span>
-                      </motion.a>
-                    </div>
+              {prices.map((price, index) => (
+                <motion.div
+                  key={price.title}
+                  variants={itemVariants}
+                  custom={index}
+                  className={`${mobileStyles.cardPadding} bg-white/5 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 transition-all duration-300 border border-white/10 relative overflow-hidden`}
+                  onMouseEnter={() => setHoveredPrice(price.title)}
+                  onMouseLeave={() => setHoveredPrice(null)}
+                >
+                  <div className="flex items-center space-x-3 ${mobileStyles.margin}">
+                    <div className={`${mobileStyles.iconSize} text-white`}>{price.icon}</div>
+                    <h3 className={`${mobileStyles.headingSize} font-bold text-white`}>{t(`prices.${price.title}.title`)}</h3>
                   </div>
+                  
+                  <div className={`${mobileStyles.margin} flex items-baseline`}>
+                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                      {formatCurrency(price.price, 'USD')}
+                    </span>
+                    <span className={`${mobileStyles.textSize} text-white/60 ml-2`}>USD</span>
+                  </div>
+                  
+                  <p className={`${mobileStyles.textSize} text-white/80 ${mobileStyles.margin}`}>
+                    {t(`prices.${price.title}.description`)}
+                  </p>
+                  
+                  {/* Дополнительная информация при наведении */}
+                  {hoveredPrice === price.title && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-3 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className={`${mobileStyles.textSize} text-white/60`}>EUR:</span>
+                        <span className={`${mobileStyles.textSize} font-medium text-white`}>
+                          {formatCurrency(price.price / EUR_RATE, 'EUR')}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className={`${mobileStyles.textSize} text-white/60`}>RUB:</span>
+                        <span className={`${mobileStyles.textSize} font-medium text-white`}>
+                          {formatCurrency(price.price * USD_RATE, 'RUB')}
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+              
+              {/* Секция поддержки */}
+              <motion.div
+                variants={itemVariants}
+                custom={prices.length}
+                className={`${mobileStyles.cardPadding} col-span-1 sm:col-span-2 lg:col-span-3 bg-white/5 backdrop-blur-sm ${mobileStyles.borderRadius} border border-white/10`}
+              >
+                <h3 className={`${mobileStyles.headingSize} font-bold text-white ${mobileStyles.margin}`}>{t('support_me')}</h3>
+                <p className={`${mobileStyles.textSize} text-white/80 ${mobileStyles.margin}`}>{t('support_description')}</p>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="https://ko-fi.com/baneronetwo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${mobileStyles.buttonPadding} bg-gradient-to-r from-purple-600 to-blue-600 ${mobileStyles.borderRadius} text-white ${mobileStyles.textSize} hover:shadow-lg hover:shadow-purple-600/20 transition-all duration-300 flex items-center space-x-2`}
+                  >
+                    <FaCoffee className={mobileStyles.iconSize} />
+                    <span>Ko-fi</span>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@baneronetwo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${mobileStyles.buttonPadding} bg-gradient-to-r from-red-600 to-red-500 ${mobileStyles.borderRadius} text-white ${mobileStyles.textSize} hover:shadow-lg hover:shadow-red-600/20 transition-all duration-300 flex items-center space-x-2`}
+                  >
+                    <FaYoutube className={mobileStyles.iconSize} />
+                    <span>YouTube</span>
+                  </a>
                 </div>
               </motion.div>
             </motion.div>
