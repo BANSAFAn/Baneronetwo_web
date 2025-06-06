@@ -297,10 +297,10 @@ const Projects = () => {
           <div className="mb-8">
             <Tabs defaultValue="contributed" className="w-full">
               <TabsList className="mb-6 bg-black/30 backdrop-blur-md border border-white/10 w-full md:w-auto flex justify-center">
-                <TabsTrigger value="contributed" className="data-[state=active]:bg-white/10">
+                <TabsTrigger value="contributed" className="data-[state=active]:bg-white/10 data-[state=active]:text-white">
                   {t('contributed_projects')}
                 </TabsTrigger>
-                <TabsTrigger value="personal" className="data-[state=active]:bg-white/10">
+                <TabsTrigger value="personal" className="data-[state=active]:bg-white/10 data-[state=active]:text-white">
                   {t('personal_repositories')}
                 </TabsTrigger>
               </TabsList>

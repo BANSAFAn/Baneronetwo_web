@@ -120,7 +120,7 @@ export default function Blog() {
           <Tabs defaultValue="all" className="w-full">
             <div className="flex justify-center mb-6">
               <TabsList className="glass-morphism">
-                <TabsTrigger value="all" onClick={() => setSelectedTag(null)}>
+                <TabsTrigger value="all" onClick={() => setSelectedTag(null)} className="data-[state=active]:bg-white/10 data-[state=active]:text-white">
                   {t('all_posts')}
                 </TabsTrigger>
                 {allTags.map(tag => (
@@ -128,6 +128,7 @@ export default function Blog() {
                     key={tag} 
                     value={tag}
                     onClick={() => setSelectedTag(tag)}
+                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white"
                   >
                     {tag}
                   </TabsTrigger>

@@ -329,11 +329,9 @@ const About = () => {
             {['skills', 'services', 'prices'].map((tab) => (
               <motion.button
                 key={tab}
-                onClick={(e) => {
-                  // Явно устанавливаем значение вкладки и добавляем console.log для отладки
-                  console.log('Переключение на вкладку:', tab);
+                onClick={() => {
+                  // Упрощаем обработчик клика
                   setActiveTab(tab);
-                  createParticles(e as React.MouseEvent<HTMLElement>);
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
