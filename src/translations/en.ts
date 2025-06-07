@@ -91,6 +91,12 @@ export default {
   'russian': 'Russian',
   'ukrainian': 'Ukrainian',
   
+  // Theme switcher
+  'theme': 'Theme',
+  'light': 'Light',
+  'dark': 'Dark',
+  'system': 'System',
+  
   // Services
   'my_services': 'My Services',
   'cybersecurity': 'Cybersecurity',

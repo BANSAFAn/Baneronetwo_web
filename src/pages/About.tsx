@@ -4,6 +4,7 @@ import { Shield, Globe, Users, Cloud, Code, Youtube, MessageCircle, DollarSign, 
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
@@ -253,8 +254,9 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-black text-white p-3 md:p-8 relative overflow-hidden">
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
+        <ThemeSwitcher />
       </div>
       {/* Эффект частиц */}
       {particles.map((particle) => (

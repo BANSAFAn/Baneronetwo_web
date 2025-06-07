@@ -128,6 +128,16 @@ export function SmoothCursor({
       * {
         cursor: none !important;
       }
+      
+      /* Исключения для элементов, где нужен стандартный курсор */
+      input, textarea, select, button, a, [role="button"] {
+        cursor: auto !important;
+      }
+      
+      /* Показываем указатель для кликабельных элементов */
+      a:hover, button:hover, [role="button"]:hover {
+        cursor: pointer !important;
+      }
     `;
     // Добавляем стили в head документа
     document.head.appendChild(styleElement);
@@ -139,6 +149,16 @@ export function SmoothCursor({
   }, []);
 
   useEffect(() => {
+    // Проверяем, поддерживает ли устройство точное наведение (мышь)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    
+    // Если пользователь предпочитает уменьшенное движение или использует устройство с грубым указателем,
+    // не применяем сложные анимации курсора
+    if (prefersReducedMotion || hasCoarsePointer) {
+      return;
+    }
+    
     const updateVelocity = (currentPos: Position) => {
       const currentTime = Date.now();
       const deltaTime = currentTime - lastUpdateTime.current;
@@ -165,7 +185,8 @@ export function SmoothCursor({
       cursorX.set(currentPos.x);
       cursorY.set(currentPos.y);
 
-      if (speed > 0.1) {
+      // Ограничиваем вычисления для оптимизации производительности
+      if (speed > 0.2) { // Увеличиваем порог для уменьшения количества вычислений
         const currentAngle =
           Math.atan2(velocity.current.y, velocity.current.x) * (180 / Math.PI) +
           90;
@@ -193,7 +214,15 @@ export function SmoothCursor({
       }
     };
 
+    // Оптимизируем обработчик движения мыши с помощью throttle
+    let lastCallTime = 0;
+    const throttleInterval = 16; // ~60fps
+    
     const throttledMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastCallTime < throttleInterval) return;
+      
+      lastCallTime = now;
       if (rafId.current) return;
 
       rafId.current = requestAnimationFrame(() => {

@@ -8,6 +8,7 @@ import { Clock } from '@/components/Clock';
 import { SocialLinks } from '@/components/SocialLinks';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CustomCursor } from '@/components/CustomCursor';
 import { SmoothCursor } from '@/components/ui/smooth-cursor';
 import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
@@ -148,8 +149,9 @@ const Index = () => {
       <div className={`w-full min-h-screen flex flex-col items-center justify-center transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <AudioPlayer />
         
-        <div className="fixed top-0 left-0 z-50 p-4">
+        <div className="fixed top-0 left-0 z-50 p-4 flex gap-2">
           <LanguageSwitcher />
+          <ThemeSwitcher />
         </div>
         
         <div className="fixed top-0 right-0 z-50 p-4">

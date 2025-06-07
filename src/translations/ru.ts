@@ -83,13 +83,19 @@ export default {
   'almost_ready': 'Почти готово',
   
   // OS-specific messages
-  'linux_message': 'Я ИСПОЛЬЗУЮ NIG.os КСТАТИ',
+  'linux_message': 'Я ИСПОЛЬЮ NIG.os КСТАТИ',
   
   // Language switcher
   'language': 'Язык',
   'english': 'Английский',
   'russian': 'Русский',
   'ukrainian': 'Украинский',
+  
+  // Theme switcher
+  'theme': 'Тема',
+  'light': 'Светлая',
+  'dark': 'Тёмная',
+  'system': 'Системная',
   
   // Services
   'my_services': 'Мои услуги',

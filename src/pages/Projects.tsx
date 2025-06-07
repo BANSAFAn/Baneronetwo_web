@@ -9,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { SocialLinks } from '@/components/SocialLinks';
 import { useLanguage } from '@/context/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 interface Repository {
   name: string;
@@ -258,7 +259,10 @@ const Projects = () => {
               Baneronetwo
             </Link>
             
-            <LanguageSwitcher />
+            <div className="flex gap-2">
+              <LanguageSwitcher />
+              <ThemeSwitcher />
+            </div>
           </div>
           
           <NavigationMenu className="mt-6">

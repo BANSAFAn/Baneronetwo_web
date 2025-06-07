@@ -8,6 +8,8 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Table as UITable, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 interface BlogPost {
   id: string;
@@ -449,6 +451,11 @@ export default function BlogPost() {
 
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <LanguageSwitcher />
+        <ThemeSwitcher />
+      </div>
+      
       <div className="max-w-4xl mx-auto">
         <Link to="/blog" className="inline-block mb-6">
           <Button variant="outline" className="glass-morphism hover:bg-purple-400/20 border-purple-400/30 hover:border-purple-400/70 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_0_8px_rgba(168,85,247,0.4)]">

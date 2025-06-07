@@ -173,14 +173,12 @@ export const SocialLinks = () => {
             onClick={(e) => {
               // На мобильных устройствах отключаем анимацию частиц для повышения производительности
               if (!isMobile) {
-                e.preventDefault();
+                // Не предотвращаем стандартное поведение клика
+                // Просто добавляем анимацию частиц
                 createParticles(e, social.color);
                 createParticleStream(e, social.color, social.emoji);
                 
-                // Имитация задержки перед переходом по ссылке для показа анимации
-                setTimeout(() => {
-                  window.open(social.href, '_blank');
-                }, 300);
+                // Убираем setTimeout и window.open, позволяя браузеру обрабатывать клик стандартным образом
               }
             }}
             aria-label={social.label}
