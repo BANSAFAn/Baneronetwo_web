@@ -1,7 +1,6 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import ParticlesBg from 'particles-bg';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { CommandLine } from '@/components/CommandLine';
 import { Clock } from '@/components/Clock';
@@ -14,12 +13,13 @@ import { SmoothCursor } from '@/components/ui/smooth-cursor';
 import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/context/LanguageContext';
+import Dither from '@/animation/background';
+import PixelTrail from '@/animation/pixelts';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [pixels, setPixels] = useState<{id: number, x: number, y: number, size: number, color: string, tx: number, ty?: number}[]>([]);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const { t } = useLanguage();
@@ -27,7 +27,6 @@ const Index = () => {
   useEffect(() => {
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
-      createPixelEffect();
       setTimeout(() => setShowContent(true), 100);
     }, 3000);
 
@@ -48,63 +47,6 @@ const Index = () => {
     };
   }, []);
 
-  const createPixelEffect = (event?: React.MouseEvent<HTMLElement>, buttonColors?: string[]) => {
-    const newPixels = [];
-    const defaultColors = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9', '#F43F5E', '#22C55E'];
-    const colors = buttonColors || defaultColors;
-    
-    // Определяем позицию для создания частиц
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2;
-    let buttonWidth = 0;
-    
-    // Если событие существует, используем позицию кнопки
-    if (event) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      posX = rect.left + rect.width / 2;
-      posY = rect.top + rect.height; // Позиция снизу кнопки
-      buttonWidth = rect.width;
-    } else if (event === undefined && document.querySelector('.button-with-particles')) {
-      // Если событие не передано, но есть элемент с классом button-with-particles
-      const button = document.querySelector('.button-with-particles');
-      if (button) {
-        const rect = button.getBoundingClientRect();
-        posX = rect.left + rect.width / 2;
-        posY = rect.top + rect.height;
-        buttonWidth = rect.width;
-      }
-    }
-    
-    for (let i = 0; i < 70; i++) { // Увеличиваем количество частиц
-      const size = Math.random() * 5 + 1; // Немного уменьшаем размер частиц
-      
-      // Ограничиваем разброс шириной кнопки
-      const horizontalSpread = (Math.random() - 0.5) * (buttonWidth || 100);
-      
-      // Увеличиваем вертикальное смещение для эффекта падения
-      const verticalOffset = Math.random() * 20 + 2; // Начинаем ближе к кнопке
-      
-      // Добавляем вертикальную скорость для эффекта падения
-      const verticalSpeed = Math.random() * 15 + 5;
-      
-      newPixels.push({
-        id: i,
-        x: posX + horizontalSpread,
-        y: posY + verticalOffset,
-        size,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        tx: (Math.random() - 0.5) * 10, // Уменьшаем горизонтальное движение
-        ty: verticalSpeed // Добавляем вертикальное движение вниз
-      });
-    }
-    
-    setPixels(newPixels);
-
-    setTimeout(() => {
-      setPixels([]);
-    }, 2000);
-  };
-
   const scrollToContent = () => {
     if (mainContentRef.current) {
       mainContentRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -120,31 +62,19 @@ const Index = () => {
       {/* Custom cursor */}
       <SmoothCursor />
       
-      <div className="absolute inset-0 backdrop-blur-[3px] opacity-80">
-        <ParticlesBg 
-          type="cobweb" 
-          bg={true} 
-          color="#111111"
-          num={isMobile ? 80 : 150}
+      {/* Background animation */}
+      <div className="absolute inset-0 z-0">
+        <Dither 
+          waveSpeed={0.05} 
+          waveFrequency={3} 
+          waveAmplitude={0.3} 
+          waveColor={[0.3, 0.3, 0.5]} 
+          colorNum={4} 
+          pixelSize={2} 
+          enableMouseInteraction={true} 
+          mouseRadius={0.8} 
         />
       </div>
-      
-      {/* Pixel Animation */}
-      {pixels.map((pixel) => (
-        <div
-          key={pixel.id}
-          className="absolute animate-float"
-          style={{
-            top: `${pixel.y}px`,
-            left: `${pixel.x}px`,
-            width: `${pixel.size}px`,
-            height: `${pixel.size}px`,
-            backgroundColor: pixel.color,
-            '--tx': `${pixel.tx}px`,
-            '--ty': `${pixel.ty || 20}px`
-          } as React.CSSProperties}
-        />
-      ))}
       
       <div className={`w-full min-h-screen flex flex-col items-center justify-center transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <AudioPlayer />
@@ -188,52 +118,84 @@ const Index = () => {
         <main ref={mainContentRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-20 pb-40">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2 relative`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{t('about_me')}</h2>
                 <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('about_description')}</p>
-                <Link 
-                  to="/about" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={(e) => createPixelEffect(e, ['#3B82F6', '#9333EA'])}
-                >
-                  {t('learn_more')}
-                </Link>
+                <div className="relative">
+                  <PixelTrail 
+                    gridSize={40} 
+                    trailSize={0.1} 
+                    maxAge={250} 
+                    color="#3B82F6" 
+                    gooeyFilter={{ id: "about-gooey", strength: 10 }}
+                  />
+                  <Link 
+                    to="/about" 
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105"
+                  >
+                    {t('learn_more')}
+                  </Link>
+                </div>
               </div>
               
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-100 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-100 hover:-translate-y-2 relative`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">{t('my_projects')}</h2>
                 <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('projects_description')}</p>
-                <Link 
-                  to="/projects" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={(e) => createPixelEffect(e, ['#9333EA', '#3B82F6'])}
-                >
-                  {t('view_projects')}
-                </Link>
+                <div className="relative">
+                  <PixelTrail 
+                    gridSize={40} 
+                    trailSize={0.1} 
+                    maxAge={250} 
+                    color="#9333EA" 
+                    gooeyFilter={{ id: "projects-gooey", strength: 10 }}
+                  />
+                  <Link 
+                    to="/projects" 
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105"
+                  >
+                    {t('view_projects')}
+                  </Link>
+                </div>
               </div>
               
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-200 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-200 hover:-translate-y-2 relative`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent">{t('my_posts')}</h2>
                 <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('posts_description')}</p>
-                <Link 
-                  to="/posts" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={(e) => createPixelEffect(e, ['#DB2777', '#DC2626'])}
-                >
-                  {t('read_posts')}
-                </Link>
+                <div className="relative">
+                  <PixelTrail 
+                    gridSize={40} 
+                    trailSize={0.1} 
+                    maxAge={250} 
+                    color="#DB2777" 
+                    gooeyFilter={{ id: "posts-gooey", strength: 10 }}
+                  />
+                  <Link 
+                    to="/posts" 
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105"
+                  >
+                    {t('read_posts')}
+                  </Link>
+                </div>
               </div>
               
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2 relative`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">{t('blog')}</h2>
                 <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
-                <Link 
-                  to="/blog" 
-                  className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 button-with-particles"
-                  onMouseEnter={(e) => createPixelEffect(e, ['#3B82F6', '#16A34A'])}
-                >
-                  {t('blog')}
-                </Link>
+                <div className="relative">
+                  <PixelTrail 
+                    gridSize={40} 
+                    trailSize={0.1} 
+                    maxAge={250} 
+                    color="#16A34A" 
+                    gooeyFilter={{ id: "blog-gooey", strength: 10 }}
+                  />
+                  <Link 
+                    to="/blog" 
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105"
+                  >
+                    {t('blog')}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
