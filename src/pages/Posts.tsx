@@ -9,9 +9,9 @@ const Posts = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black dark:bg-gray-950 text-white dark:text-gray-100 p-8">
       <div className="fixed top-4 left-4 flex items-center gap-4">
-        <Link to="/" className="text-white/60 hover:text-white transition-colors">
+        <Link to="/" className="text-white/60 dark:text-gray-300/60 hover:text-white dark:hover:text-gray-100 transition-colors">
           ← {t('back')}
         </Link>
         <LanguageSwitcher />
@@ -26,20 +26,20 @@ const Posts = () => {
             href="https://www.reddit.com/user/Banerbansa/"
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-6 rounded-lg bg-gradient-to-r from-orange-500/10 to-red-500/10 backdrop-blur-sm border border-white/10 hover:from-orange-500/20 hover:to-red-500/20 transition-all duration-300"
+            className="block p-6 rounded-lg bg-gradient-to-r from-orange-500/10 to-red-500/10 backdrop-blur-sm border border-white/10 dark:border-white/20 hover:from-orange-500/20 hover:to-red-500/20 transition-all duration-300"
           >
             <h3 className="text-xl font-bold mb-2">{t('reddit_posts')}</h3>
-            <p className="text-white/60">{t('reddit_description')}</p>
+            <p className="text-white/60 dark:text-gray-300/60">{t('reddit_description')}</p>
           </a>
 
           <a
             href="https://www.youtube.com/@Baneronetwo"
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-6 rounded-lg bg-gradient-to-r from-red-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 hover:from-red-500/20 hover:to-purple-500/20 transition-all duration-300"
+            className="block p-6 rounded-lg bg-gradient-to-r from-red-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 dark:border-white/20 hover:from-red-500/20 hover:to-purple-500/20 transition-all duration-300"
           >
             <h3 className="text-xl font-bold mb-2">{t('youtube_content')}</h3>
-            <p className="text-white/60">{t('youtube_description')}</p>
+            <p className="text-white/60 dark:text-gray-300/60">{t('youtube_description')}</p>
           </a>
 
           <div className="relative group">
@@ -47,15 +47,15 @@ const Posts = () => {
               href="https://ko-fi.com/baneronetwo"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/10 hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300"
+              className="block w-full p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/10 dark:border-white/20 hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300"
             >
               <div className="flex items-center justify-center gap-2">
                 <Heart className="w-6 h-6 text-pink-500" />
                 <span className="text-xl font-bold">{t('support_work')}</span>
               </div>
             </a>
-            <div className="absolute -bottom-24 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 rounded-lg bg-black/80 backdrop-blur-lg border border-white/10">
-              <p className="text-center text-white/80">
+            <div className="absolute -bottom-24 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 rounded-lg bg-black/80 dark:bg-gray-900/80 backdrop-blur-lg border border-white/10 dark:border-white/20">
+              <p className="text-center text-white/80 dark:text-gray-300/80">
                 {t('support_description')}
               </p>
             </div>

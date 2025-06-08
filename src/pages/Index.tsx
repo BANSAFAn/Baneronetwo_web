@@ -116,7 +116,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-black dark:bg-gray-950 text-white dark:text-gray-100 relative overflow-hidden">
       {/* Custom cursor */}
       <SmoothCursor />
       
@@ -167,7 +167,7 @@ const Index = () => {
               </span>
             </h1>
             
-            <p className={`text-xl md:text-2xl text-center max-w-lg text-white/70 mb-10 transition-all duration-1000 delay-300 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+            <p className={`text-xl md:text-2xl text-center max-w-lg text-white/70 dark:text-gray-300/70 mb-10 transition-all duration-1000 delay-300 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
               {t('developer')}
             </p>
 
@@ -178,9 +178,9 @@ const Index = () => {
           
           <button 
             onClick={scrollToContent}
-            className={`absolute bottom-10 animate-bounce transition-all duration-300 bg-white/5 backdrop-blur-md rounded-full p-3 hover:bg-white/10 ${showContent ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute bottom-10 animate-bounce transition-all duration-300 bg-white/5 dark:bg-white/10 backdrop-blur-md rounded-full p-3 hover:bg-white/10 dark:hover:bg-white/20 ${showContent ? 'opacity-100' : 'opacity-0'}`}
           >
-            <ChevronDown className="h-6 w-6 text-white/80" />
+            <ChevronDown className="h-6 w-6 text-white/80 dark:text-gray-300/80" />
           </button>
         </header>
 
@@ -188,9 +188,9 @@ const Index = () => {
         <main ref={mainContentRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-20 pb-40">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{t('about_me')}</h2>
-                <p className="text-white/70 mb-6">{t('about_description')}</p>
+                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('about_description')}</p>
                 <Link 
                   to="/about" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 button-with-particles"
@@ -200,9 +200,9 @@ const Index = () => {
                 </Link>
               </div>
               
-              <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-100 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-100 hover:-translate-y-2`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">{t('my_projects')}</h2>
-                <p className="text-white/70 mb-6">{t('projects_description')}</p>
+                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('projects_description')}</p>
                 <Link 
                   to="/projects" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 button-with-particles"
@@ -212,9 +212,9 @@ const Index = () => {
                 </Link>
               </div>
               
-              <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-200 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-200 hover:-translate-y-2`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent">{t('my_posts')}</h2>
-                <p className="text-white/70 mb-6">{t('posts_description')}</p>
+                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('posts_description')}</p>
                 <Link 
                   to="/posts" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 button-with-particles"
@@ -224,9 +224,9 @@ const Index = () => {
                 </Link>
               </div>
               
-              <div className={`bg-black/30 backdrop-blur-md p-8 rounded-lg border border-white/10 transition-all duration-500 hover:border-white/20 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2`}>
+              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2`}>
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">{t('blog')}</h2>
-                <p className="text-white/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
+                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
                 <Link 
                   to="/blog" 
                   className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 button-with-particles"

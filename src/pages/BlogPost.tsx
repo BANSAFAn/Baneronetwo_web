@@ -56,7 +56,7 @@ const renderers = {
     const language = match ? match[1] : 'text';
     
     if (inline) {
-      return <code className="bg-black/30 px-1 py-0.5 rounded text-sm" {...props}>{children}</code>;
+      return <code className="bg-black/30 dark:bg-gray-800/30 px-1 py-0.5 rounded text-sm" {...props}>{children}</code>;
     }
     
     const copyToClipboard = () => {
@@ -65,21 +65,21 @@ const renderers = {
     
     return (
       <div className="relative my-6 rounded-lg overflow-hidden">
-        <div className="flex items-center justify-between bg-black/50 px-4 py-2 text-xs text-gray-300 border-b border-white/10">
+        <div className="flex items-center justify-between bg-black/50 dark:bg-gray-800/50 px-4 py-2 text-xs text-gray-300 dark:text-gray-300 border-b border-white/10 dark:border-white/20">
           <div className="flex items-center gap-2">
             <Code className="w-4 h-4" />
             <span>{language}</span>
           </div>
           <button 
             onClick={copyToClipboard}
-            className="flex items-center gap-1 hover:text-white transition-colors"
+            className="flex items-center gap-1 hover:text-white dark:hover:text-gray-100 transition-colors"
             title="Copy code"
           >
             <Copy className="w-4 h-4" />
             <span>Copy</span>
           </button>
         </div>
-        <pre className="p-4 overflow-x-auto bg-black/30 backdrop-blur-sm text-sm">
+        <pre className="p-4 overflow-x-auto bg-black/30 dark:bg-gray-800/30 backdrop-blur-sm text-sm">
           <code className={className} {...props}>
             {children}
           </code>
@@ -96,7 +96,7 @@ const renderers = {
     if (childText.startsWith('::warning')) {
       const content = childText.replace('::warning', '').trim();
       return (
-        <div className="my-6 p-4 bg-amber-950/30 border-l-4 border-amber-500 rounded-r-lg">
+        <div className="my-6 p-4 bg-amber-950/30 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-r-lg">
           <div className="flex items-center gap-2 font-bold text-amber-400 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"></path>
@@ -111,7 +111,7 @@ const renderers = {
     if (childText.startsWith('::note')) {
       const content = childText.replace('::note', '').trim();
       return (
-        <div className="my-6 p-4 bg-blue-950/30 border-l-4 border-blue-500 rounded-r-lg">
+        <div className="my-6 p-4 bg-blue-950/30 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded-r-lg">
           <div className="flex items-center gap-2 font-bold text-blue-400 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 8h.01M12 12v8"></path>
@@ -127,7 +127,7 @@ const renderers = {
     if (childText.startsWith('::tip')) {
       const content = childText.replace('::tip', '').trim();
       return (
-        <div className="my-6 p-4 bg-green-950/30 border-l-4 border-green-500 rounded-r-lg">
+        <div className="my-6 p-4 bg-green-950/30 dark:bg-green-900/20 border-l-4 border-green-500 rounded-r-lg">
           <div className="flex items-center gap-2 font-bold text-green-400 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 12h6m-6-4h6m2 8H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2"></path>
@@ -147,11 +147,11 @@ const renderers = {
       const videoId = youtubeMatch[1];
       return (
         <div className="my-6">
-          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300">
+          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300 dark:text-gray-300">
             <Youtube className="w-4 h-4 text-red-500" />
             <span>YouTube Video</span>
           </div>
-          <div className="relative overflow-hidden rounded-lg pt-[56.25%] w-full bg-black/20">
+          <div className="relative overflow-hidden rounded-lg pt-[56.25%] w-full bg-black/20 dark:bg-gray-800/20">
             <iframe 
               className="absolute inset-0 w-full h-full"
               src={`https://www.youtube.com/embed/${videoId}`} 
@@ -171,7 +171,7 @@ const renderers = {
       const imagePath = imageMatch[1];
       return (
         <div className="my-6">
-          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300">
+          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300 dark:text-gray-300">
             <Image className="w-4 h-4 text-blue-500" />
             <span>Image</span>
           </div>
@@ -192,13 +192,13 @@ const renderers = {
       const videoPath = videoMatch[1];
       return (
         <div className="my-6">
-          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300">
+          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300 dark:text-gray-300">
             <Video className="w-4 h-4 text-purple-500" />
             <span>Video</span>
           </div>
           <video 
             controls 
-            className="w-full rounded-lg bg-black/30"
+            className="w-full rounded-lg bg-black/30 dark:bg-gray-800/30"
             src={videoPath}
           >
             Your browser does not support the video tag.
@@ -215,11 +215,11 @@ const renderers = {
       const fileName = filePath.split('/').pop() || 'file';
       return (
         <div className="my-6">
-          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300">
+          <div className="flex items-center gap-2 mb-2 text-sm text-gray-300 dark:text-gray-300">
             <File className="w-4 h-4 text-gray-500" />
             <span>File: {fileName}</span>
           </div>
-          <div className="bg-black/30 border border-white/10 rounded-lg p-4 flex justify-between items-center">
+          <div className="bg-black/30 dark:bg-gray-800/30 border border-white/10 dark:border-white/20 rounded-lg p-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <File className="w-6 h-6" />
               <span>{fileName}</span>
@@ -227,7 +227,7 @@ const renderers = {
             <a 
               href={filePath} 
               download
-              className="py-2 px-4 bg-white/10 hover:bg-white/20 transition-colors rounded-lg flex items-center gap-2"
+              className="py-2 px-4 bg-white/10 dark:bg-white/10 hover:bg-white/20 dark:hover:bg-white/20 transition-colors rounded-lg flex items-center gap-2"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -412,20 +412,20 @@ export default function BlogPost() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-12 px-4 min-h-screen">
+      <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
         <div className="flex justify-start mb-6">
-          <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
+          <Link to="/" className="flex items-center gap-2 text-gray-300 dark:text-gray-300 hover:text-purple-300 dark:hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
             <Home className="w-5 h-5" />
             <span>{t('home')}</span>
           </Link>
         </div>
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-10 w-3/4 bg-gray-700 rounded"></div>
-            <div className="h-6 w-1/3 bg-gray-700 rounded"></div>
-            <div className="h-4 w-full bg-gray-700 rounded"></div>
-            <div className="h-4 w-full bg-gray-700 rounded"></div>
-            <div className="h-4 w-2/3 bg-gray-700 rounded"></div>
+            <div className="h-10 w-3/4 bg-gray-700 dark:bg-gray-700 rounded"></div>
+            <div className="h-6 w-1/3 bg-gray-700 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 w-full bg-gray-700 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 w-full bg-gray-700 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 w-2/3 bg-gray-700 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -434,10 +434,10 @@ export default function BlogPost() {
 
   if (error || !blog) {
     return (
-      <div className="container mx-auto py-12 px-4 min-h-screen">
+      <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Error</h2>
-          <p className="mb-6">{error || 'Blog post not found'}</p>
+          <h2 className="text-2xl font-bold mb-4 text-white dark:text-gray-100">Error</h2>
+          <p className="mb-6 text-white dark:text-gray-300">{error || 'Blog post not found'}</p>
           <Link to="/blog">
             <Button variant="outline">
               <ArrowLeft className="mr-2" />
@@ -450,7 +450,7 @@ export default function BlogPost() {
   }
 
   return (
-    <div className="container mx-auto py-12 px-4 min-h-screen">
+    <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
         <ThemeSwitcher />
@@ -467,7 +467,7 @@ export default function BlogPost() {
         <div id="blog-content" className="space-y-6 animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-bold text-gradient">{blog.title}</h1>
           
-          <div className="flex flex-wrap gap-4 items-center text-gray-300 mb-8">
+          <div className="flex flex-wrap gap-4 items-center text-gray-300 dark:text-gray-300 mb-8">
             <div className="flex items-center">
               <Calendar className="w-5 h-5 mr-1" />
               {blog.date}
@@ -477,7 +477,7 @@ export default function BlogPost() {
               {blog.tags.map(tag => (
                 <span 
                   key={tag} 
-                  className="bg-white/5 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                  className="bg-white/5 dark:bg-white/10 px-3 py-1 rounded-full text-sm flex items-center gap-1"
                 >
                   <TagIcon className="w-4 h-4" />
                   {tag}
@@ -486,7 +486,7 @@ export default function BlogPost() {
             </div>
           </div>
           
-          <div className="prose prose-invert prose-lg max-w-none prose-pre:bg-black/50 prose-pre:backdrop-blur-md prose-pre:border prose-pre:border-white/10 prose-img:rounded-lg prose-headings:text-gradient prose-a:text-purple-400 prose-a:font-medium prose-a:no-underline prose-a:relative prose-a:border-b-2 prose-a:border-purple-500 hover:prose-a:border-purple-300 prose-a:transition-all prose-a:duration-300 hover:prose-a:text-purple-200 hover:prose-a:translate-y-[-2px] prose-a:after:content-[''] prose-a:after:absolute prose-a:after:w-0 prose-a:after:h-full prose-a:after:bg-purple-400/30 prose-a:after:left-0 prose-a:after:top-0 prose-a:after:transition-all prose-a:after:duration-300 hover:prose-a:after:w-full prose-a:px-1 prose-a:mx-0.5 prose-a:py-0.5 hover:prose-a:shadow-[0_0_15px_rgba(192,132,252,0.8)] prose-a:bg-purple-500/20 blog-content">            <ReactMarkdown 
+          <div className="prose prose-invert prose-lg max-w-none prose-pre:bg-black/50 dark:prose-pre:bg-gray-800/50 prose-pre:backdrop-blur-md prose-pre:border prose-pre:border-white/10 dark:prose-pre:border-white/20 prose-img:rounded-lg prose-headings:text-gradient prose-a:text-purple-400 prose-a:font-medium prose-a:no-underline prose-a:relative prose-a:border-b-2 prose-a:border-purple-500 hover:prose-a:border-purple-300 prose-a:transition-all prose-a:duration-300 hover:prose-a:text-purple-200 hover:prose-a:translate-y-[-2px] prose-a:after:content-[''] prose-a:after:absolute prose-a:after:w-0 prose-a:after:h-full prose-a:after:bg-purple-400/30 prose-a:after:left-0 prose-a:after:top-0 prose-a:after:transition-all prose-a:after:duration-300 hover:prose-a:after:w-full prose-a:px-1 prose-a:mx-0.5 prose-a:py-0.5 hover:prose-a:shadow-[0_0_15px_rgba(192,132,252,0.8)] prose-a:bg-purple-500/20 blog-content">            <ReactMarkdown 
               components={renderers}
               rehypePlugins={[rehypeRaw]} 
               remarkPlugins={[remarkGfm]}

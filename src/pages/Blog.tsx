@@ -105,14 +105,14 @@ export default function Blog() {
     : blogs;
 
   return (
-    <div className="container mx-auto py-12 px-4 min-h-screen">
+    <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>
       
       <div className="flex justify-start mb-6">
-        <Link to="/" className="flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
+        <Link to="/" className="flex items-center gap-2 text-gray-300 dark:text-gray-300 hover:text-purple-300 dark:hover:text-purple-300 transition-colors relative after:content-[''] after:absolute after:w-0 after:h-[1px] after:bg-purple-400 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full hover:translate-y-[-1px]">
           <Home className="w-5 h-5" />
           <span>{t('home')}</span>
         </Link>
@@ -120,14 +120,14 @@ export default function Blog() {
       <div className="space-y-8 animate-fade-in">
         <div className="flex flex-col items-center text-center mb-10 space-y-4">
           <h1 className="text-4xl md:text-6xl font-bold text-gradient">{t('blog')}</h1>
-          <p className="text-lg text-gray-300 max-w-2xl">{t('blog_description')}</p>
+          <p className="text-lg text-gray-300 dark:text-gray-300 max-w-2xl">{t('blog_description')}</p>
         </div>
         
         <div className="glitch-effect">
           <Tabs defaultValue="all" className="w-full">
             <div className="flex justify-center mb-6">
-              <TabsList className="glass-morphism">
-                <TabsTrigger value="all" onClick={() => setSelectedTag(null)} className="data-[state=active]:bg-white/10 data-[state=active]:text-white">
+              <TabsList className="glass-morphism dark:bg-gray-900/30">
+                <TabsTrigger value="all" onClick={() => setSelectedTag(null)} className="data-[state=active]:bg-white/10 data-[state=active]:text-white dark:data-[state=active]:text-gray-100">
                   {t('all_posts')}
                 </TabsTrigger>
                 {allTags.map(tag => (
@@ -135,7 +135,7 @@ export default function Blog() {
                     key={tag} 
                     value={tag}
                     onClick={() => setSelectedTag(tag)}
-                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white"
+                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white dark:data-[state=active]:text-gray-100"
                   >
                     {tag}
                   </TabsTrigger>
@@ -151,25 +151,25 @@ export default function Blog() {
                     key={blog.id} 
                     className="transition-all hover:scale-105 duration-300 group"
                   >
-                    <Card className="h-full neo-blur border-white/5 group-hover:border-white/20 overflow-hidden">
+                    <Card className="h-full neo-blur border-white/5 dark:border-white/10 group-hover:border-white/20 dark:group-hover:border-white/30 overflow-hidden">
                       <CardHeader>
                         <CardTitle className="text-xl font-bold group-hover:text-purple-400 transition-colors">
                           {blog.title}
                         </CardTitle>
-                        <div className="flex items-center text-sm text-gray-400">
+                        <div className="flex items-center text-sm text-gray-400 dark:text-gray-400">
                           <Calendar className="w-4 h-4 mr-1" />
                           {blog.date}
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-gray-300">{blog.summary}</p>
+                        <p className="text-sm text-gray-300 dark:text-gray-300">{blog.summary}</p>
                       </CardContent>
                       <CardFooter>
                         <div className="flex flex-wrap gap-2">
                           {blog.tags.map(tag => (
                             <span 
                               key={tag} 
-                              className="bg-white/5 px-2 py-1 rounded-full text-xs flex items-center gap-1"
+                              className="bg-white/5 dark:bg-white/10 px-2 py-1 rounded-full text-xs flex items-center gap-1"
                             >
                               <TagIcon className="w-3 h-3" />
                               {tag}
@@ -194,25 +194,25 @@ export default function Blog() {
                         key={blog.id} 
                         className="transition-all hover:scale-105 duration-300 group"
                       >
-                        <Card className="h-full neo-blur border-white/5 group-hover:border-white/20">
+                        <Card className="h-full neo-blur border-white/5 dark:border-white/10 group-hover:border-white/20 dark:group-hover:border-white/30">
                           <CardHeader>
                             <CardTitle className="text-xl font-bold group-hover:text-purple-400 transition-colors">
                               {blog.title}
                             </CardTitle>
-                            <div className="flex items-center text-sm text-gray-400">
+                            <div className="flex items-center text-sm text-gray-400 dark:text-gray-400">
                               <Calendar className="w-4 h-4 mr-1" />
                               {blog.date}
                             </div>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-sm text-gray-300">{blog.summary}</p>
+                            <p className="text-sm text-gray-300 dark:text-gray-300">{blog.summary}</p>
                           </CardContent>
                           <CardFooter>
                             <div className="flex flex-wrap gap-2">
                               {blog.tags.map(tag => (
                                 <span 
                                   key={tag} 
-                                  className="bg-white/5 px-2 py-1 rounded-full text-xs flex items-center gap-1"
+                                  className="bg-white/5 dark:bg-white/10 px-2 py-1 rounded-full text-xs flex items-center gap-1"
                                 >
                                   <TagIcon className="w-3 h-3" />
                                   {tag}
@@ -232,15 +232,15 @@ export default function Blog() {
         {isLoading && (
           <div className="flex justify-center py-20">
             <div className="animate-pulse flex flex-col items-center">
-              <div className="h-8 w-64 bg-gray-700 rounded mb-4"></div>
-              <div className="h-4 w-32 bg-gray-700 rounded"></div>
+              <div className="h-8 w-64 bg-gray-700 dark:bg-gray-700 rounded mb-4"></div>
+              <div className="h-4 w-32 bg-gray-700 dark:bg-gray-700 rounded"></div>
             </div>
           </div>
         )}
         
         {!isLoading && filteredBlogs.length === 0 && (
           <div className="text-center py-20">
-            <h3 className="text-xl">{t('no_posts_found')}</h3>
+            <h3 className="text-xl text-white dark:text-gray-100">{t('no_posts_found')}</h3>
           </div>
         )}
       </div>
