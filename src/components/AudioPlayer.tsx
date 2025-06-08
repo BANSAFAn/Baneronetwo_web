@@ -188,7 +188,7 @@ const Equalizer = () => {
   return (
     <div className="flex items-center h-12 gap-[2px] mx-2">
       {/* Индикатор уровня громкости */}
-      <div className="relative mr-2 w-3 h-12 bg-black/20 rounded-full overflow-hidden">
+      <div className="relative mr-2 w-3 h-12 bg-black/20 dark:bg-white/10 rounded-full overflow-hidden">
         <div 
           className="absolute bottom-0 w-full bg-gradient-to-t from-green-500 to-yellow-500 rounded-full"
           style={{ 
@@ -475,8 +475,8 @@ export const AudioPlayer = () => {
   
   if (noTracksFound) {
     return (
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black/30 backdrop-blur-lg p-3 rounded-full border border-white/10">
-        <div className="text-white text-sm px-4 py-2">
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-black/30 dark:bg-gray-900/50 backdrop-blur-lg p-3 rounded-full border border-white/10 dark:border-gray-700/50">
+        <div className="text-white dark:text-gray-200 text-sm px-4 py-2">
           Музыка не найдена. Добавьте MP3 файлы в папку /public/music
         </div>
       </div>
@@ -484,7 +484,7 @@ export const AudioPlayer = () => {
   }
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-4 bg-black/30 backdrop-blur-lg p-3 rounded-full border border-white/10">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-4 bg-black/30 dark:bg-gray-900/50 backdrop-blur-lg p-3 rounded-full border border-white/10 dark:border-gray-700/50">
       <audio
         ref={audioRef}
         src={trackList[currentTrackIndex]}
@@ -508,25 +508,25 @@ export const AudioPlayer = () => {
       <button
         onClick={playPrevTrack}
         disabled={isLoading || trackList.length <= 1}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 transition-colors disabled:opacity-50"
       >
-        <SkipBack size={18} />
+        <SkipBack size={18} className="text-white dark:text-gray-200" />
       </button>
       
       <button
         onClick={togglePlayPause}
         disabled={isLoading}
-        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 transition-colors disabled:opacity-50"
       >
-        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+        {isPlaying ? <Pause size={20} className="text-white dark:text-gray-200" /> : <Play size={20} className="text-white dark:text-gray-200" />}
       </button>
       
       <button
         onClick={playNextTrack}
         disabled={isLoading || trackList.length <= 1}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-800/50 dark:hover:bg-gray-700/50 transition-colors disabled:opacity-50"
       >
-        <SkipForward size={18} />
+        <SkipForward size={18} className="text-white dark:text-gray-200" />
       </button>
       
       {/* Equalizer component */}
@@ -556,7 +556,7 @@ export const AudioPlayer = () => {
             step={1}
             className="w-24"
           />
-          <span className="text-xs text-white/70 mt-1">{volume[0]}%</span>
+          <span className="text-xs text-white/70 dark:text-gray-300/70 mt-1">{volume[0]}%</span>
         </div>
       </div>
     </div>

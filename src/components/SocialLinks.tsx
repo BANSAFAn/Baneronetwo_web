@@ -190,7 +190,7 @@ export const SocialLinks = () => {
                 transform: 'scale(1.5)'
               }}
             />
-            <div className="relative p-2 md:p-3 bg-black/30 backdrop-blur-md rounded-full border border-white/10 transition-all duration-300 hover:scale-110">
+            <div className="relative p-2 md:p-3 bg-black/30 dark:bg-gray-800/30 backdrop-blur-md rounded-full border border-white/10 dark:border-white/20 transition-all duration-300 hover:scale-110">
               <Icon
                 className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-500 hover:scale-110 ${!isMobile ? `group-hover:${social.animation}` : ''}`}
                 style={{ color: social.color }}
@@ -198,7 +198,7 @@ export const SocialLinks = () => {
               
               {/* Скрываем всплывающие подсказки на мобильных устройствах */}
               {!isMobile && (
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-gray-800/80 backdrop-blur-md px-2 py-1 rounded text-xs text-white dark:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                   {social.label}
                 </div>
               )}
