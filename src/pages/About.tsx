@@ -5,7 +5,10 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import Lanyard from '@/animation/pixelts';
+import React from 'react';
+
+// Импортируем компонент Lanyard
+const LanyardComponent = React.lazy(() => import('../../Lanyard/Lanyard/Lanyard'));
 
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
@@ -267,6 +270,155 @@ const About = () => {
     }, 1500);
   };
 
+  // Функция для отображения карточки Lanyard
+  const renderLanyardCard = () => {
+    return (
+      <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] relative overflow-hidden rounded-xl mb-8">
+        <React.Suspense fallback={<div className="w-full h-full flex items-center justify-center bg-black/30 backdrop-blur-md">Loading...</div>}>
+          <LanyardComponent transparent={true} />
+        </React.Suspense>
+      </div>
+    );
+  };
+
+  // Функция для отображения содержимого в зависимости от выбранной вкладки
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'skills':
+        return (
+          <div className={`${mobileStyles.sectionSpacing}`}>
+            {renderLanyardCard()}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={containerVariants}
+              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
+            >
+              {/* Карточки языков программирования */}
+              {programmingLanguages.map((lang, index) => (
+                <motion.div
+                  key={lang.name}
+                  variants={itemVariants}
+                  custom={index}
+                  className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300 relative overflow-hidden group`}
+                  onMouseEnter={() => setHoveredSkill(lang.name)}
+                  onMouseLeave={() => setHoveredSkill(null)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={lang.logo} 
+                        alt={lang.name} 
+                        className={`${mobileStyles.imageSize} object-contain transition-all duration-300 group-hover:scale-110`} 
+                      />
+                      <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{lang.name}</h3>
+                    </div>
+                    <div className="w-16 sm:w-20 md:w-24 bg-gray-700 dark:bg-gray-600 h-2 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${lang.level}%` }}
+                        transition={{ duration: 1, delay: index * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Описание языка программирования */}
+                  {hoveredSkill === lang.name && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className={`mt-3 ${mobileStyles.textSize} text-white/80 dark:text-gray-300/80`}
+                    >
+                      {lang.description}
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        );
+      case 'services':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.name}
+                variants={itemVariants}
+                custom={index}
+                className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300`}
+                whileHover={{ y: -5, boxShadow: '0 10px 30px -10px rgba(139, 92, 246, 0.3)' }}
+                onClick={(e) => createParticleEffect(e)}
+              >
+                <div className="flex flex-col space-y-4">
+                  <div className="flex items-center space-x-3">
+                    {service.icon}
+                    <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{t(service.name)}</h3>
+                  </div>
+                  <p className={`${mobileStyles.textSize} text-white/70 dark:text-gray-300/70`}>{service.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        );
+      case 'prices':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {prices.map((price, index) => (
+              <motion.div
+                key={price.title}
+                variants={itemVariants}
+                custom={index}
+                className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300 relative overflow-hidden`}
+                onMouseEnter={() => setHoveredPrice(index)}
+                onMouseLeave={() => setHoveredPrice(null)}
+                whileHover={{ y: -5, boxShadow: '0 10px 30px -10px rgba(139, 92, 246, 0.3)' }}
+              >
+                <div className="flex flex-col space-y-4">
+                  <div className="flex items-center space-x-3">
+                    {price.icon}
+                    <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{t(price.title)}</h3>
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <DollarSign className="w-5 h-5 text-green-400" />
+                      <p className="text-xl font-bold text-white dark:text-gray-100">
+                        {formatCurrency(price.price, 'UAH')}
+                      </p>
+                    </div>
+                    
+                    {hoveredPrice === index && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-1"
+                      >
+                        <p className="text-sm text-white/70 dark:text-gray-300/70">
+                          {formatCurrency(price.price * USD_RATE, 'USD')}
+                        </p>
+                        <p className="text-sm text-white/70 dark:text-gray-300/70">
+                          {formatCurrency(price.price * EUR_RATE, 'EUR')}
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
+                  
+                  <p className={`${mobileStyles.textSize} text-white/70 dark:text-gray-300/70`}>{price.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black dark:bg-gray-950 text-white dark:text-gray-100 relative overflow-hidden">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
@@ -279,11 +431,6 @@ const About = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>{t('back')}</span>
         </Link>
-      </div>
-      
-      {/* Lanyard component */}
-      <div className="w-full h-[50vh] mb-8">
-        <Lanyard position={[0, 0, 30]} gravity={[0, -40, 0]} fov={20} transparent={true} />
       </div>
       
       <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
@@ -347,191 +494,9 @@ const About = () => {
             ))}
           </div>
 
-          {/* Секция навыков */}
-          {activeTab === 'skills' && (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
-            >
-              {/* Карточки языков программирования */}
-              {programmingLanguages.map((lang, index) => (
-                <motion.div
-                  key={lang.name}
-                  variants={itemVariants}
-                  custom={index}
-                  className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300 relative overflow-hidden group`}
-                  onMouseEnter={() => setHoveredSkill(lang.name)}
-                  onMouseLeave={() => setHoveredSkill(null)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <img 
-                        src={lang.logo} 
-                        alt={lang.name} 
-                        className={`${mobileStyles.imageSize} object-contain transition-all duration-300 group-hover:scale-110`} 
-                      />
-                      <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{lang.name}</h3>
-                    </div>
-                    <div className="w-24 bg-gray-700 dark:bg-gray-600 h-2 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${lang.level}%` }}
-                        transition={{ duration: 1, delay: index * 0.1 }}
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Описание языка программирования */}
-                  {hoveredSkill === lang.name && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className={`mt-3 ${mobileStyles.textSize} text-white/80 dark:text-gray-300/80`}
-                    >
-                      {lang.description}
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-
-              {/* Карточки навыков */}
-              {skills.map((skill, index) => (
-                <motion.div
-                  key={skill.name}
-                  variants={itemVariants}
-                  custom={index + programmingLanguages.length}
-                  className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={`${mobileStyles.iconSize} text-white dark:text-gray-200`}>{skill.icon}</div>
-                    <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{t(skill.name)}</h3>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-
-          {/* Секция услуг */}
-          {activeTab === 'services' && (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-              className={`grid grid-cols-1 sm:grid-cols-2 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
-            >
-              {services.map((service, index) => (
-                <motion.div
-                  key={service.name}
-                  variants={itemVariants}
-                  custom={index}
-                  className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300 border border-white/10 dark:border-white/20`}
-                >
-                  <div className="flex items-center space-x-3 ${mobileStyles.margin}">
-                    <div className={`${mobileStyles.iconSize} text-white dark:text-gray-200`}>{service.icon}</div>
-                    <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{t(service.name)}</h3>
-                  </div>
-                  <p className={`mt-2 ${mobileStyles.textSize} text-white/80 dark:text-gray-300/80`}>{service.description}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-
-          {/* Секция прайс-листа */}
-          {activeTab === 'prices' && (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${mobileStyles.gridGap} w-full max-w-4xl mx-auto ${mobileStyles.sectionSpacing}`}
-            >
-              {prices.map((price, index) => (
-                <motion.div
-                  key={price.title}
-                  variants={itemVariants}
-                  custom={index}
-                  className={`${mobileStyles.cardPadding} bg-white/5 dark:bg-white/10 backdrop-blur-sm ${mobileStyles.borderRadius} hover:bg-white/10 dark:hover:bg-white/20 transition-all duration-300 border border-white/10 dark:border-white/20 relative overflow-hidden`}
-                  onMouseEnter={() => setHoveredPrice(index)}
-                  onMouseLeave={() => setHoveredPrice(null)}
-                >
-                  <div className="flex items-center space-x-3 ${mobileStyles.margin}">
-                    <div className={`${mobileStyles.iconSize} text-white dark:text-gray-200`}>{price.icon}</div>
-                    <h3 className={`${mobileStyles.headingSize} font-bold text-white dark:text-gray-100`}>{t(price.title)}</h3>
-                  </div>
-                  
-                  <div className={`${mobileStyles.margin} flex items-baseline`}>
-                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
-                      {formatCurrency(price.price, 'USD')}
-                    </span>
-                    <span className={`${mobileStyles.textSize} text-white/60 dark:text-gray-300/60 ml-2`}>USD</span>
-                  </div>
-                  
-                  <p className={`${mobileStyles.textSize} text-white/80 dark:text-gray-300/80 ${mobileStyles.margin}`}>
-                    {price.description}
-                  </p>
-                  
-                  {/* Дополнительная информация при наведении */}
-                  {hoveredPrice === index && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 20 }}
-                      transition={{ duration: 0.3 }}
-                      className="mt-3 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className={`${mobileStyles.textSize} text-white/60 dark:text-gray-300/60`}>EUR:</span>
-                        <span className={`${mobileStyles.textSize} font-medium text-white dark:text-gray-200`}>
-                          {formatCurrency(price.price * EUR_RATE, 'EUR')}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className={`${mobileStyles.textSize} text-white/60 dark:text-gray-300/60`}>UAH:</span>
-                        <span className={`${mobileStyles.textSize} font-medium text-white dark:text-gray-200`}>
-                          {formatCurrency(price.price / USD_RATE, 'UAH')}
-                        </span>
-                      </div>
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </div>
-
-        {/* Секция поддержки */}
-        <div className="mt-20 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-            {t('support_work')}
-          </h2>
-          <p className="text-white/70 dark:text-gray-300/70 max-w-2xl mx-auto mb-8">
-            {t('support_description')}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a 
-              href="https://ko-fi.com/baneronetwo" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 py-2 px-4 bg-[#FF5E5B]/20 dark:bg-[#FF5E5B]/10 rounded-lg hover:bg-[#FF5E5B]/30 dark:hover:bg-[#FF5E5B]/20 transition-all duration-300 border border-[#FF5E5B]/30 dark:border-[#FF5E5B]/20"
-              onMouseEnter={createParticleEffect}
-            >
-              <Heart className="w-5 h-5 text-[#FF5E5B]" />
-              <span>Ko-fi</span>
-            </a>
-            <a 
-              href="https://www.youtube.com/@baneronetwo" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 py-2 px-4 bg-[#FF0000]/20 dark:bg-[#FF0000]/10 rounded-lg hover:bg-[#FF0000]/30 dark:hover:bg-[#FF0000]/20 transition-all duration-300 border border-[#FF0000]/30 dark:border-[#FF0000]/20"
-              onMouseEnter={createParticleEffect}
-            >
-              <Youtube className="w-5 h-5 text-[#FF0000]" />
-              <span>YouTube</span>
-            </a>
+          {/* Содержимое вкладки */}
+          <div className="w-full">
+            {renderContent()}
           </div>
         </div>
       </div>

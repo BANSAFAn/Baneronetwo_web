@@ -1,10 +1,16 @@
-import { createRoot } from 'react-dom/client'
-import { ThemeProvider } from 'next-themes'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { ThemeProvider } from 'next-themes'
+import { LanguageProvider } from './context/LanguageContext.tsx'
 
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider attribute="class" defaultTheme="dark">
-    <App />
-  </ThemeProvider>
-);
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
+    </ThemeProvider>
+  </React.StrictMode>,
+)

@@ -1,17 +1,14 @@
 import React from 'react';
 
-// React component for background animation
+// Динамический импорт компонента Dither
+const DitherComponent = React.lazy(() => import('../../Dither/Dither/Dither'));
 
-// Simple CSS background component
-const SimpleBackground = () => {
+export const SimpleBackground = () => {
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-800 relative">
-      {/* Animated background pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.3),transparent_50%)] animate-pulse"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(120,119,198,0.2),transparent_50%)] animate-pulse delay-1000"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.2),transparent_50%)] animate-pulse delay-2000"></div>
-      </div>
+    <div className="fixed inset-0 z-[-1] overflow-hidden">
+      <React.Suspense fallback={<div className="w-full h-full bg-black"></div>}>
+        <DitherComponent />
+      </React.Suspense>
     </div>
   );
 };
