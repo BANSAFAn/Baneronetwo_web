@@ -55,7 +55,7 @@ export const LoadingScreen = () => {
     // OS-specific initializations
     if (detectedOS === 'Linux') {
       setShowLinuxMessage(true);
-      const timerId = window.setTimeout(() => setFadeOut(true), 3000);
+      const timerId = window.setTimeout(() => setFadeOut(true), 1500);
       addTimer(timerId);
     } else if (detectedOS === 'MacOS') {
       setShowAppleIcon(true);
@@ -125,9 +125,9 @@ export const LoadingScreen = () => {
         clearInterval(intervalId);
         const timerId = window.setTimeout(() => {
           setGlitch(true);
-          const fadeTimerId = window.setTimeout(() => setFadeOut(true), 1000);
+          const fadeTimerId = window.setTimeout(() => setFadeOut(true), 500);
           addTimer(fadeTimerId);
-        }, 1500);
+        }, 1000);
         addTimer(timerId);
       }
     }, isMobile ? 400 : 800);

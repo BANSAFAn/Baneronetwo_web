@@ -10,11 +10,13 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CustomCursor } from '@/components/CustomCursor';
 import { SmoothCursor } from '@/components/ui/smooth-cursor';
+import { Navigation } from '@/components/Navigation';
 import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/context/LanguageContext';
-import Dither from '@/animation/background';
+import SimpleBackground from '@/animation/background';
 import PixelTrail from '@/animation/pixelts';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +30,7 @@ const Index = () => {
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
       setTimeout(() => setShowContent(true), 100);
-    }, 3000);
+    }, 1500);
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -58,22 +60,14 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black dark:bg-gray-950 text-white dark:text-gray-100 relative overflow-hidden">
+    <div className="min-h-screen text-white dark:text-gray-100 relative overflow-hidden">
       {/* Custom cursor */}
       <SmoothCursor />
       
       {/* Background animation */}
       <div className="absolute inset-0 z-0">
-        <Dither 
-          waveSpeed={0.05} 
-          waveFrequency={3} 
-          waveAmplitude={0.3} 
-          waveColor={[0.3, 0.3, 0.5]} 
-          colorNum={4} 
-          pixelSize={2} 
-          enableMouseInteraction={true} 
-          mouseRadius={0.8} 
-        />
+        {console.log("Rendering background in Index.tsx")}
+        <SimpleBackground />
       </div>
       
       <div className={`w-full min-h-screen flex flex-col items-center justify-center transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -86,6 +80,11 @@ const Index = () => {
         
         <div className="fixed top-0 right-0 z-50 p-4">
           <Clock />
+        </div>
+        
+        {/* Navigation Menu */}
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
+          <Navigation />
         </div>
         
         {/* Hero Section */}

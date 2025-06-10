@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import Lanyard from '@/animation/pixelts';
 
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
@@ -278,6 +279,11 @@ const About = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>{t('back')}</span>
         </Link>
+      </div>
+      
+      {/* Lanyard component */}
+      <div className="w-full h-[50vh] mb-8">
+        <Lanyard position={[0, 0, 30]} gravity={[0, -40, 0]} fov={20} transparent={true} />
       </div>
       
       <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
