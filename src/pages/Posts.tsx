@@ -1,9 +1,8 @@
 
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 const Posts = () => {
   const { t } = useLanguage();
@@ -15,7 +14,6 @@ const Posts = () => {
           ← {t('back')}
         </Link>
         <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
 
       <div className="max-w-4xl mx-auto pt-16">

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, GitFork, Github, LoaderCircle } from 'lucide-react';
+import { Star, GitFork, Github, Loader } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "../components/ui/navigation-menu";
 import ParticlesBg from 'particles-bg';
@@ -9,7 +9,7 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { SocialLinks } from '../components/SocialLinks';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-import { ThemeSwitcher } from '../components/ThemeSwitcher';
+
 
 interface Repository {
   name: string;
@@ -261,7 +261,6 @@ const Projects = () => {
             
             <div className="flex gap-2">
               <LanguageSwitcher />
-              <ThemeSwitcher />
             </div>
           </div>
           
@@ -312,7 +311,7 @@ const Projects = () => {
               <TabsContent value="contributed" className="animate-fade-in">
                 {loading ? (
                   <div className="flex justify-center items-center py-16">
-                    <LoaderCircle className="w-8 h-8 animate-spin text-purple-500" />
+                    <Loader className="w-8 h-8 animate-spin text-purple-500" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -324,7 +323,7 @@ const Projects = () => {
               <TabsContent value="personal" className="animate-fade-in">
                 {loading ? (
                   <div className="flex justify-center items-center py-16">
-                    <LoaderCircle className="w-8 h-8 animate-spin text-purple-500" />
+                    <Loader className="w-8 h-8 animate-spin text-purple-500" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

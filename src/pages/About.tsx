@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { Shield, Globe, Users, Cloud, Code, Youtube, MessageCircle, DollarSign, Briefcase, Laptop, Heart, Check, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import React from 'react';
 
 // Импортируем компонент Lanyard
@@ -423,7 +422,6 @@ const About = () => {
     <div className="min-h-screen bg-black dark:bg-gray-950 text-white dark:text-gray-100 relative overflow-hidden">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
       
       <div className="fixed top-4 left-4 z-50">

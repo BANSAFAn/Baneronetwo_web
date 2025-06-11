@@ -1,9 +1,8 @@
 
 import { useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { useLanguage } from "../context/LanguageContext";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { Home, AlertTriangle, RefreshCw } from "lucide-react";
 
 const NotFound = () => {
@@ -54,7 +53,6 @@ const NotFound = () => {
 
       <div className="absolute top-4 right-4 z-10 flex gap-2">
         <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
 
       <div className={`relative z-10 text-center glass-morphism p-10 rounded-lg border border-white/10 max-w-md mx-auto ${glitchActive ? 'glitch-effect' : ''}`}>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, TagIcon, Home } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+
 
 interface BlogPost {
   id: string;
@@ -108,7 +108,6 @@ export default function Blog() {
     <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
       
       <div className="flex justify-start mb-6">

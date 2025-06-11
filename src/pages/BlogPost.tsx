@@ -9,7 +9,7 @@ import remarkGfm from 'remark-gfm';
 import { Button } from '../components/ui/button';
 import { Table as UITable, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-import { ThemeSwitcher } from '../components/ThemeSwitcher';
+
 
 interface BlogPost {
   id: string;
@@ -453,7 +453,6 @@ export default function BlogPost() {
     <div className="container mx-auto py-12 px-4 min-h-screen bg-black dark:bg-gray-950">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
       
       <div className="max-w-4xl mx-auto">
