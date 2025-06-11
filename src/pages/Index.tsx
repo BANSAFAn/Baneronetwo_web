@@ -127,12 +127,12 @@ const Index = () => {
                     color="#3B82F6" 
                     gooeyFilter={{ id: "about-gooey", strength: 10 }}
                   />
-                  <Link 
-                    to="/about" 
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105"
+                  <button 
+                    onClick={() => window.location.href = '/about'}
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 cursor-pointer"
                   >
                     {t('learn_more')}
-                  </Link>
+                  </button>
                 </div>
               </div>
               
@@ -147,12 +147,12 @@ const Index = () => {
                     color="#9333EA" 
                     gooeyFilter={{ id: "projects-gooey", strength: 10 }}
                   />
-                  <Link 
-                    to="/projects" 
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105"
+                  <button 
+                    onClick={() => window.location.href = '/projects'}
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 cursor-pointer"
                   >
                     {t('view_projects')}
-                  </Link>
+                  </button>
                 </div>
               </div>
               
@@ -167,12 +167,12 @@ const Index = () => {
                     color="#DB2777" 
                     gooeyFilter={{ id: "posts-gooey", strength: 10 }}
                   />
-                  <Link 
-                    to="/posts" 
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105"
+                  <button 
+                    onClick={() => window.location.href = '/posts'}
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 cursor-pointer"
                   >
                     {t('read_posts')}
-                  </Link>
+                  </button>
                 </div>
               </div>
               
@@ -187,12 +187,12 @@ const Index = () => {
                     color="#16A34A" 
                     gooeyFilter={{ id: "blog-gooey", strength: 10 }}
                   />
-                  <Link 
-                    to="/blog" 
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105"
+                  <button 
+                    onClick={() => window.location.href = '/blog'}
+                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 cursor-pointer"
                   >
                     {t('blog')}
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
