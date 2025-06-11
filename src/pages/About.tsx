@@ -4,10 +4,10 @@ import { Shield, Globe, Users, Cloud, Code, Youtube, MessageCircle, DollarSign, 
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Импортируем компонент Lanyard
-const LanyardComponent = React.lazy(() => import('../../Lanyard/Lanyard/Lanyard'));
+// Импортируем компонент Lanyard с использованием абсолютного пути
+const LanyardComponent = React.lazy(() => import('@/components/Lanyard'));
 
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
