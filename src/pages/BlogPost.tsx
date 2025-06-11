@@ -1,15 +1,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ArrowLeft, Calendar, TagIcon, Table, Code, Copy, Youtube, Image, File, Video, Home } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import { Button } from '@/components/ui/button';
-import { Table as UITable, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { Button } from '../components/ui/button';
+import { Table as UITable, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { ThemeSwitcher } from '../components/ThemeSwitcher';
 
 interface BlogPost {
   id: string;
