@@ -1,22 +1,22 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { LoadingScreen } from '@/components/LoadingScreen';
-import { CommandLine } from '@/components/CommandLine';
-import { Clock } from '@/components/Clock';
-import { SocialLinks } from '@/components/SocialLinks';
-import { AudioPlayer } from '@/components/AudioPlayer';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { CustomCursor } from '@/components/CustomCursor';
-import { SmoothCursor } from '@/components/ui/smooth-cursor';
-import { Navigation } from '@/components/Navigation';
+import { LoadingScreen } from '../components/LoadingScreen';
+import { CommandLine } from '../components/CommandLine';
+import { Clock } from '../components/Clock';
+import { SocialLinks } from '../components/SocialLinks';
+import { AudioPlayer } from '../components/AudioPlayer';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { ThemeSwitcher } from '../components/ThemeSwitcher';
+import { CustomCursor } from '../components/CustomCursor';
+import { SmoothCursor } from '../components/ui/smooth-cursor';
+import Navigation from '../components/Navigation';
 import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useLanguage } from '@/context/LanguageContext';
-import SimpleBackground from '@/animation/background';
-import PixelTrail from '@/animation/pixelts';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import { useIsMobile } from '../hooks/use-mobile';
+import { useLanguage } from '../context/LanguageContext';
+import SimpleBackground from '../animation/background';
+import PixelTrail from '../animation/pixelts';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
