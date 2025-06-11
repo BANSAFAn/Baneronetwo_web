@@ -13,9 +13,9 @@ import {
   CuboidCollider,
   Physics,
   RigidBody,
-  useRopeJoint,
   useSphericalJoint,
   RigidBodyProps,
+  // Удаляем импорт useRopeJoint, так как он не доступен в версии 1.1.1
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import * as THREE from "three";
@@ -144,9 +144,9 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     return (): void => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+  useSphericalJoint(fixed, j1, [[0, 0, 0], [0, 0, 0]]);
+  useSphericalJoint(j1, j2, [[0, 0, 0], [0, 0, 0]]);
+  useSphericalJoint(j2, j3, [[0, 0, 0], [0, 0, 0]]);
   useSphericalJoint(j3, card, [
     [0, 0, 0],
     [0, 1.45, 0],

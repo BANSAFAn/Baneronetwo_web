@@ -9,8 +9,8 @@ import {
   SkipForward,
   SkipBack
 } from 'lucide-react';
-import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/hooks/use-toast";
+import { Slider } from "./ui/slider";
+import { useToast } from "../hooks/use-toast";
 
 // Equalizer component
 const Equalizer = () => {
@@ -356,25 +356,83 @@ export const AudioPlayer = () => {
 
   const togglePlayPause = () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
+      try {
+        if (isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          setIsLoading(true);
+          
+          // Сохраняем текущую громкость
+          const currentVolume = audioRef.current.volume;
+          
+          // Проверяем, загружен ли аудиофайл
+          if (audioRef.current.readyState >= 2) {
+            // Если аудио уже загружено, просто воспроизводим
+            audioRef.current.volume = currentVolume; // Восстанавливаем громкость
+            audioRef.current.play()
+              .then(() => {
+                setIsPlaying(true);
+                setIsLoading(false);
+              })
+              .catch(error => {
+                console.error('Ошибка воспроизведения:', error);
+                setIsLoading(false);
+                toast({
+                  variant: "destructive",
+                  title: "Ошибка воспроизведения",
+                  description: "Не удалось воспроизвести аудиофайл",
+                });
+              });
+          } else {
+            // Если аудио еще не загружено, добавляем обработчик события
+            const playHandler = () => {
+              if (audioRef.current) {
+                audioRef.current.volume = currentVolume; // Восстанавливаем громкость
+                audioRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                  setIsLoading(false);
+                })
+                .catch(error => {
+                  console.error('Ошибка воспроизведения:', error);
+                  setIsLoading(false);
+                  toast({
+                    variant: "destructive",
+                    title: "Ошибка воспроизведения",
+                    description: "Не удалось воспроизвести аудиофайл",
+                  });
+                });
+              }
+              // Удаляем обработчик после использования
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('canplaythrough', playHandler);
+              }
+            };
+            
+            // Добавляем обработчик события canplaythrough
+            if (audioRef.current) {
+              audioRef.current.addEventListener('canplaythrough', playHandler);
+            }
+            
+            // Устанавливаем таймаут для случаев, когда событие canplaythrough не срабатывает
+            setTimeout(() => {
+              if (isLoading) {
+                console.log('Таймаут при загрузке трека, пробуем воспроизвести');
+                playHandler();
+              }
+            }, 3000);
+          }
+        }
+      } catch (error) {
+        console.error('Ошибка при переключении воспроизведения:', error);
+        setIsLoading(false);
         setIsPlaying(false);
-      } else {
-        setIsLoading(true);
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch(error => {
-            console.error('Playback error:', error);
-            setIsLoading(false);
-            toast({
-              variant: "destructive",
-              title: "Ошибка воспроизведения",
-              description: "Не удалось воспроизвести аудиофайл",
-            });
-          });
+        toast({
+          variant: "destructive",
+          title: "Ошибка воспроизведения",
+          description: "Произошла неизвестная ошибка при воспроизведении",
+        });
       }
     }
   };
@@ -387,26 +445,56 @@ export const AudioPlayer = () => {
     setIsLoading(true);
     
     if (audioRef.current) {
-      // Сохраняем текущее состояние воспроизведения
-      const wasPlaying = !audioRef.current.paused;
-      
-      // Устанавливаем новый источник
-      audioRef.current.src = trackList[nextIndex];
-      
-      // Если аудио воспроизводилось или это переключение трека, запускаем воспроизведение
-      if (wasPlaying || true) { // Всегда воспроизводить при переключении трека
-        audioRef.current.play()
-          .then(() => {
-            setIsLoading(false);
-            setIsPlaying(true);
-          })
-          .catch((error) => {
-            console.error('Ошибка воспроизведения при переключении:', error);
-            setIsLoading(false);
-            setIsPlaying(false);
-          });
-      } else {
+      try {
+        // Сохраняем текущее состояние воспроизведения и громкость
+        const wasPlaying = !audioRef.current.paused;
+        const currentVolume = audioRef.current.volume;
+        
+        // Устанавливаем новый источник
+        audioRef.current.src = trackList[nextIndex];
+        
+        // Восстанавливаем громкость
+        audioRef.current.volume = currentVolume;
+        
+        // Если аудио воспроизводилось или это переключение трека, запускаем воспроизведение
+        if (wasPlaying || true) { // Всегда воспроизводить при переключении трека
+          // Добавляем обработчик события canplaythrough
+          const playHandler = () => {
+            if (audioRef.current) {
+              audioRef.current.play()
+                .then(() => {
+                  setIsLoading(false);
+                  setIsPlaying(true);
+                })
+                .catch((error) => {
+                  console.error('Ошибка воспроизведения при переключении:', error);
+                  setIsLoading(false);
+                  setIsPlaying(false);
+                });
+              // Удаляем обработчик после использования
+              audioRef.current.removeEventListener('canplaythrough', playHandler);
+            }
+          };
+          
+          // Добавляем обработчик события canplaythrough
+          if (audioRef.current) {
+            audioRef.current.addEventListener('canplaythrough', playHandler);
+          }
+          
+          // Устанавливаем таймаут для случаев, когда событие canplaythrough не срабатывает
+          setTimeout(() => {
+            if (isLoading) {
+              console.log('Таймаут при загрузке трека, пробуем воспроизвести');
+              playHandler();
+            }
+          }, 3000);
+        } else {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Ошибка при переключении трека:', error);
         setIsLoading(false);
+        setIsPlaying(false);
       }
     }
   };
@@ -419,26 +507,56 @@ export const AudioPlayer = () => {
     setIsLoading(true);
     
     if (audioRef.current) {
-      // Сохраняем текущее состояние воспроизведения
-      const wasPlaying = !audioRef.current.paused;
-      
-      // Устанавливаем новый источник
-      audioRef.current.src = trackList[prevIndex];
-      
-      // Если аудио воспроизводилось или это переключение трека, запускаем воспроизведение
-      if (wasPlaying || true) { // Всегда воспроизводить при переключении трека
-        audioRef.current.play()
-          .then(() => {
-            setIsLoading(false);
-            setIsPlaying(true);
-          })
-          .catch((error) => {
-            console.error('Ошибка воспроизведения при переключении:', error);
-            setIsLoading(false);
-            setIsPlaying(false);
-          });
-      } else {
+      try {
+        // Сохраняем текущее состояние воспроизведения и громкость
+        const wasPlaying = !audioRef.current.paused;
+        const currentVolume = audioRef.current.volume;
+        
+        // Устанавливаем новый источник
+        audioRef.current.src = trackList[prevIndex];
+        
+        // Восстанавливаем громкость
+        audioRef.current.volume = currentVolume;
+        
+        // Если аудио воспроизводилось или это переключение трека, запускаем воспроизведение
+        if (wasPlaying || true) { // Всегда воспроизводить при переключении трека
+          // Добавляем обработчик события canplaythrough
+          const playHandler = () => {
+            if (audioRef.current) {
+              audioRef.current.play()
+                .then(() => {
+                  setIsLoading(false);
+                  setIsPlaying(true);
+                })
+                .catch((error) => {
+                  console.error('Ошибка воспроизведения при переключении:', error);
+                  setIsLoading(false);
+                  setIsPlaying(false);
+                });
+              // Удаляем обработчик после использования
+              audioRef.current.removeEventListener('canplaythrough', playHandler);
+            }
+          };
+          
+          // Добавляем обработчик события canplaythrough
+          if (audioRef.current) {
+            audioRef.current.addEventListener('canplaythrough', playHandler);
+          }
+          
+          // Устанавливаем таймаут для случаев, когда событие canplaythrough не срабатывает
+          setTimeout(() => {
+            if (isLoading) {
+              console.log('Таймаут при загрузке трека, пробуем воспроизвести');
+              playHandler();
+            }
+          }, 3000);
+        } else {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Ошибка при переключении трека:', error);
         setIsLoading(false);
+        setIsPlaying(false);
       }
     }
   };
@@ -490,17 +608,32 @@ export const AudioPlayer = () => {
         src={trackList[currentTrackIndex]}
         onEnded={handleTrackEnd}
         onLoadedData={() => {
-          // Когда аудио загружено, пробуем воспроизвести его
-          if (audioRef.current && !isPlaying) {
-            audioRef.current.play()
-              .then(() => {
-                setIsPlaying(true);
+          try {
+            // Когда аудио загружено, устанавливаем громкость и пробуем воспроизвести его
+            if (audioRef.current) {
+              // Устанавливаем громкость из состояния
+              const safeVolume = Math.min(1, Math.max(0, volume[0] / 100));
+              audioRef.current.volume = safeVolume;
+              console.log('Установлена громкость при загрузке:', safeVolume);
+              
+              // Если не воспроизводится, пробуем запустить
+              if (!isPlaying) {
+                audioRef.current.play()
+                  .then(() => {
+                    setIsPlaying(true);
+                    setIsLoading(false);
+                  })
+                  .catch(error => {
+                    console.error('Ошибка автовоспроизведения:', error);
+                    setIsLoading(false);
+                  });
+              } else {
                 setIsLoading(false);
-              })
-              .catch(error => {
-                console.error('Ошибка автовоспроизведения:', error);
-                setIsLoading(false);
-              });
+              }
+            }
+          } catch (error) {
+            console.error('Ошибка при обработке загруженного аудио:', error);
+            setIsLoading(false);
           }
         }}
       />
@@ -537,24 +670,34 @@ export const AudioPlayer = () => {
       <div className="flex items-center gap-2">
         <VolumeIcon />
         <div className="flex flex-col items-center">
-          <Slider
-            value={volume}
-            onValueChange={(newValue) => {
+          <input
+            type="range"
+            min="0"
+            max="300"
+            step="1"
+            value={volume[0]}
+            onChange={(e) => {
               try {
-                // Проверяем, что newValue - это массив и содержит хотя бы один элемент
-                if (Array.isArray(newValue) && newValue.length > 0) {
-                  // Ограничиваем значение в пределах допустимого диапазона
-                  const safeValue = [Math.min(300, Math.max(0, newValue[0]))];
-                  setVolume(safeValue);
+                const newValue = parseInt(e.target.value, 10);
+                // Ограничиваем значение в пределах допустимого диапазона
+                const safeValue = [Math.min(300, Math.max(0, newValue))];
+                setVolume(safeValue);
+                
+                // Напрямую устанавливаем громкость аудио элементу
+                if (audioRef.current) {
+                  const safeVolume = Math.min(1, Math.max(0, newValue / 100));
+                  audioRef.current.volume = safeVolume;
+                  console.log('Установлена громкость напрямую:', safeVolume);
                 }
               } catch (error) {
                 console.error('Ошибка при изменении громкости:', error);
                 // Не даем ошибке прервать выполнение приложения
               }
             }}
-            max={300} // Максимальная громкость 300%
-            step={1}
-            className="w-24"
+            className="w-24 h-2 bg-secondary rounded-full appearance-none cursor-pointer"
+            style={{
+              background: 'linear-gradient(to right, #6366f1 0%, #6366f1 ' + (volume[0] / 3) + '%, rgba(255,255,255,0.1) ' + (volume[0] / 3) + '%, rgba(255,255,255,0.1) 100%)'
+            }}
           />
           <span className="text-xs text-white/70 dark:text-gray-300/70 mt-1">{volume[0]}%</span>
         </div>
