@@ -14,7 +14,7 @@ const ProfileCardComponent: React.FC<ProfileCardComponentProps> = ({ transparent
   const isMobile = useIsMobile();
   
   // Адаптивные настройки для мобильных устройств
-  const cardHeight = isMobile ? '400px' : '540px';
+  const cardHeight = isMobile ? '450px' : '600px';
   
   return (
     <div 
@@ -27,15 +27,15 @@ const ProfileCardComponent: React.FC<ProfileCardComponentProps> = ({ transparent
             avatarUrl="/avatar.svg"
             iconUrl="/icon.svg"
             grainUrl="/grain.svg"
-            name={t('developer_name') || 'Baneronetwo'}
-            title={t('developer_title') || 'Software Engineer'}
+            name="Baneronetwo"
+            title="Meow"
             handle="baneronetwo"
-            status={t('status_online') || 'Online'}
-            contactText={t('contact_me') || 'Contact'}
+            status={t('Hmmmmm') || 'Online'}
+            contactText={t('contact_me') || 'Visit Website'}
             showUserInfo={true}
             enableTilt={!isMobile} // Отключаем эффект наклона на мобильных устройствах
             className="w-full max-w-md mx-auto"
-            onContactClick={() => window.open('https://github.com/baneronetwo', '_blank')}
+            onContactClick={() => window.open('https://baneronetwo.vercel.app', '_blank')}
           />
         </div>
       </Suspense>

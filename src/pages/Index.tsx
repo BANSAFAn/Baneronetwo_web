@@ -1,22 +1,20 @@
 
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { LoadingScreen } from '../components/LoadingScreen';
 import { CommandLine } from '../components/CommandLine';
 import { Clock } from '../components/Clock';
 import { SocialLinks } from '../components/SocialLinks';
 import { AudioPlayer } from '../components/AudioPlayer';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-
-import { CustomCursor } from '../components/CustomCursor';
 import { SmoothCursor } from '../components/ui/smooth-cursor';
 import Navigation from '../components/Navigation';
-import { UserCircle, Newspaper, Github, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useLanguage } from '../context/LanguageContext';
 import SimpleBackground from '../animation/background';
 import PixelTrail from '../animation/pixelts';
 import ErrorBoundary from '../components/ErrorBoundary';
+import ProfileCardComponent from '../components/ProfileCardComponent';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +64,6 @@ const Index = () => {
       
       {/* Background animation */}
       <div className="absolute inset-0 z-0">
-        {console.log("Rendering background in Index.tsx")}
         <SimpleBackground />
       </div>
       
@@ -102,6 +99,10 @@ const Index = () => {
             <div className={`transition-all duration-1000 delay-400 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <SocialLinks />
             </div>
+
+            <div className={`mt-12 w-full max-w-md transition-all duration-1000 delay-500 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <ProfileCardComponent transparent={true} />
+            </div>
           </div>
           
           <button 
@@ -115,86 +116,24 @@ const Index = () => {
         {/* Main Content Section */}
         <main ref={mainContentRef} className="min-h-screen w-full flex flex-col items-center justify-center pt-20 pb-40">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in hover:-translate-y-2 relative`}>
-                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{t('about_me')}</h2>
-                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('about_description')}</p>
-                <div className="relative">
-                  <PixelTrail 
-                    gridSize={40} 
-                    trailSize={0.1} 
-                    maxAge={250} 
-                    color="#3B82F6" 
-                    gooeyFilter={{ id: "about-gooey", strength: 10 }}
-                  />
-                  <Link 
-                    to="/about"
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 cursor-pointer"
-                  >
-                    {t('learn_more')}
-                  </Link>
-                </div>
-              </div>
-              
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-100 hover:-translate-y-2 relative`}>
-                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">{t('my_projects')}</h2>
-                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('projects_description')}</p>
-                <div className="relative">
-                  <PixelTrail 
-                    gridSize={40} 
-                    trailSize={0.1} 
-                    maxAge={250} 
-                    color="#9333EA" 
-                    gooeyFilter={{ id: "projects-gooey", strength: 10 }}
-                  />
-                  <Link 
-                    to="/projects"
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-md text-white hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 cursor-pointer"
-                  >
-                    {t('view_projects')}
-                  </Link>
-                </div>
-              </div>
-              
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/10 animate-fade-in delay-200 hover:-translate-y-2 relative`}>
-                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent">{t('my_posts')}</h2>
-                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('posts_description')}</p>
-                <div className="relative">
-                  <PixelTrail 
-                    gridSize={40} 
-                    trailSize={0.1} 
-                    maxAge={250} 
-                    color="#DB2777" 
-                    gooeyFilter={{ id: "posts-gooey", strength: 10 }}
-                  />
-                  <Link 
-                    to="/posts"
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-pink-600 to-red-600 rounded-md text-white hover:from-pink-700 hover:to-red-700 transition-all duration-300 hover:scale-105 cursor-pointer"
-                  >
-                    {t('read_posts')}
-                  </Link>
-                </div>
-              </div>
-              
-              <div className={`bg-black/30 dark:bg-gray-900/30 backdrop-blur-md p-8 rounded-lg border border-white/10 dark:border-white/20 transition-all duration-500 hover:border-white/20 dark:hover:border-white/30 hover:shadow-lg hover:shadow-blue-500/10 animate-fade-in delay-300 hover:-translate-y-2 relative`}>
-                <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">{t('blog')}</h2>
-                <p className="text-white/70 dark:text-gray-300/70 mb-6">{t('blog_description') || 'Read my latest blog posts with updates, tutorials and thoughts.'}</p>
-                <div className="relative">
-                  <PixelTrail 
-                    gridSize={40} 
-                    trailSize={0.1} 
-                    maxAge={250} 
-                    color="#16A34A" 
-                    gooeyFilter={{ id: "blog-gooey", strength: 10 }}
-                  />
-                  <Link 
-                    to="/blog"
-                    className="inline-block py-2 px-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-md text-white hover:from-blue-700 hover:to-green-700 transition-all duration-300 hover:scale-105 cursor-pointer"
-                  >
-                    {t('blog')}
-                  </Link>
-                </div>
-              </div>
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                {t('welcome_message') || 'Welcome to my personal website'}
+              </h2>
+              <p className="text-xl text-white/70 dark:text-gray-300/70 max-w-2xl mx-auto">
+                {t('welcome_description') || 'Feel free to explore my projects, read my blog posts, or get in touch with me.'}
+              </p>
+            </div>
+            
+            <div className="relative">
+              <PixelTrail 
+                gridSize={40} 
+                trailSize={0.1} 
+                maxAge={250} 
+                color="#3B82F6" 
+                gooeyFilter={{ id: "main-gooey", strength: 10 }}
+              />
+              <CommandLine />
             </div>
           </div>
         </main>
