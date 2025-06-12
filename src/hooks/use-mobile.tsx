@@ -9,7 +9,22 @@ export function useIsMobile() {
   React.useEffect(() => {
     // Функция для определения мобильного устройства
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+      // Проверяем ширину экрана
+      const isMobileWidth = window.innerWidth < MOBILE_BREAKPOINT
+      
+      // Проверяем user-agent на наличие мобильных устройств
+      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+      
+      // Проверяем ориентацию экрана
+      const isPortraitOrientation = window.matchMedia("(orientation: portrait)").matches
+      
+      // Проверяем поддержку touch событий
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      
+      // Комбинируем все проверки
+      setIsMobile(isMobileWidth || (isMobileUserAgent && (isPortraitOrientation || isTouchDevice)))
     }
     
     // Проверяем сразу при монтировании
@@ -17,20 +32,22 @@ export function useIsMobile() {
     
     // Используем и resize, и matchMedia для более надежного отслеживания
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const orientationMql = window.matchMedia("(orientation: portrait)")
     
-    // Обработчик для matchMedia
+    // Обработчики для различных событий
     const handleMediaChange = () => checkIsMobile()
-    
-    // Обработчик для resize
     const handleResize = () => checkIsMobile()
+    const handleOrientationChange = () => checkIsMobile()
     
-    // Добавляем оба слушателя
+    // Добавляем все слушатели
     mql.addEventListener("change", handleMediaChange)
+    orientationMql.addEventListener("change", handleOrientationChange)
     window.addEventListener("resize", handleResize, { passive: true })
     
-    // Очищаем оба слушателя при размонтировании
+    // Очищаем все слушатели при размонтировании
     return () => {
       mql.removeEventListener("change", handleMediaChange)
+      orientationMql.removeEventListener("change", handleOrientationChange)
       window.removeEventListener("resize", handleResize)
     }
   }, [])

@@ -4,10 +4,10 @@ import { Shield, Globe, Users, Cloud, Code, Youtube, MessageCircle, DollarSign, 
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-// Импортируем компонент Lanyard с использованием абсолютного пути
-const LanyardComponent = React.lazy(() => import('@/components/Lanyard'));
+// Импортируем компонент ProfileCard с использованием абсолютного пути
+const ProfileCardComponent = React.lazy(() => import('@/components/ProfileCardComponent'));
 
 const About = () => {
   const [hoveredPrice, setHoveredPrice] = useState<number | null>(null);
@@ -269,12 +269,12 @@ const About = () => {
     }, 1500);
   };
 
-  // Функция для отображения карточки Lanyard
+  // Функция для отображения карточки профиля
   const renderLanyardCard = () => {
     return (
       <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] relative overflow-hidden rounded-xl mb-8">
         <React.Suspense fallback={<div className="w-full h-full flex items-center justify-center bg-black/30 backdrop-blur-md">Loading...</div>}>
-          <LanyardComponent transparent={true} />
+          <ProfileCardComponent transparent={true} />
         </React.Suspense>
       </div>
     );

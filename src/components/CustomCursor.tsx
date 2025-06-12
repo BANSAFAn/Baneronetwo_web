@@ -1,12 +1,22 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocation } from 'react-router-dom';
 
 export const CustomCursor = () => {
   const isMobile = useIsMobile();
+  const location = useLocation();
   
   // Не рендерим кастомный курсор на мобильных устройствах
-  if (isMobile) {
+  // или на определенных страницах
+  const currentPath = location.pathname;
+  const isSpecialPage = [
+    '/about', 
+    '/blog', 
+    '/projects'
+  ].some(path => currentPath.startsWith(path));
+  
+  if (isMobile || isSpecialPage) {
     return null;
   }
   
