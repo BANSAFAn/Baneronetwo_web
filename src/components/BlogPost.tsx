@@ -34,17 +34,119 @@ const BlogPost = ({ slug, onBack }: BlogPostProps) => {
   }, [slug]);
 
   const renderMarkdown = (markdown: string) => {
-    return markdown
+    // Process code blocks with syntax highlighting first
+    markdown = markdown.replace(/```([\s\S]*?)```/g, (match, content) => {
+      // Extract language if specified
+      const firstLineBreak = content.indexOf('\n');
+      let language = '';
+      let code = content;
+      
+      if (firstLineBreak > 0) {
+        language = content.substring(0, firstLineBreak).trim();
+        code = content.substring(firstLineBreak + 1);
+      }
+      
+      return `<pre class="bg-cyber-darker rounded p-4 my-4 overflow-x-auto"><code class="language-${language || 'text'} text-neon-orange">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+    });
+
+    // Process tables
+    markdown = markdown.replace(/\|(.+)\|\s*\n\|\s*[-:\|\s]+\|\s*\n((\|.+\|\s*\n)+)/g, (match) => {
+      const rows = match.split('\n').filter(row => row.trim() !== '');
+      const headerRow = rows[0];
+      const separatorRow = rows[1];
+      const bodyRows = rows.slice(2);
+      
+      const headers = headerRow.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
+      
+      let tableHtml = '<div class="overflow-x-auto my-4"><table class="w-full border-collapse">';
+      
+      // Table header
+      tableHtml += '<thead><tr>';
+      headers.forEach(header => {
+        tableHtml += `<th class="border border-neon-blue p-2 text-neon-green">${header}</th>`;
+      });
+      tableHtml += '</tr></thead>';
+      
+      // Table body
+      tableHtml += '<tbody>';
+      bodyRows.forEach(row => {
+        const cells = row.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
+        tableHtml += '<tr>';
+        cells.forEach(cell => {
+          tableHtml += `<td class="border border-neon-blue p-2 text-neon-purple">${cell}</td>`;
+        });
+        tableHtml += '</tr>';
+      });
+      tableHtml += '</tbody></table></div>';
+      
+      return tableHtml;
+    });
+
+    // Process horizontal rules
+    markdown = markdown.replace(/^---$/gm, '<hr class="border-t border-neon-blue my-6" />');
+
+    // Process headings
+    markdown = markdown
       .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold text-neon-blue mb-4">$1</h3>')
       .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold text-neon-green mb-4">$1</h2>')
-      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold text-neon-orange mb-6">$1</h1>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold text-neon-orange mb-6">$1</h1>');
+
+    // Process blockquotes
+    markdown = markdown.replace(/^> (.*)$/gm, '<blockquote class="border-l-4 border-neon-purple pl-4 py-2 my-4 text-neon-purple italic">$1</blockquote>');
+
+    // Process lists
+    markdown = markdown.replace(/^\s*\d+\.\s+(.*)$/gm, '<li class="ml-6 list-decimal text-neon-green mb-2">$1</li>');
+    markdown = markdown.replace(/^\s*-\s+(.*)$/gm, '<li class="ml-6 list-disc text-neon-green mb-2">$1</li>');
+    
+    // Wrap adjacent list items in ul/ol tags
+    markdown = markdown.replace(/(<li class="ml-6 list-decimal.*?>.*?<\/li>\s*)+/g, '<ol class="my-4">$&</ol>');
+    markdown = markdown.replace(/(<li class="ml-6 list-disc.*?>.*?<\/li>\s*)+/g, '<ul class="my-4">$&</ul>');
+
+    // Process inline elements
+    markdown = markdown
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-neon-blue hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/!\[([^\]]+)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded my-4" />')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-neon-green">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="text-neon-purple">$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-cyber-darker text-neon-orange px-2 py-1 rounded text-sm">$1</code>')
+      .replace(/`(.*?)`/g, '<code class="bg-cyber-darker text-neon-orange px-2 py-1 rounded text-sm">$1</code>');
+
+    // Process custom containers
+    markdown = markdown
       .replace(/::tip\s*([\s\S]*?):::/g, '<div class="border-l-4 border-neon-green bg-cyber-darker p-4 my-4"><div class="text-neon-green font-bold mb-2">💡 TIP</div><div>$1</div></div>')
       .replace(/::warning\s*([\s\S]*?):::/g, '<div class="border-l-4 border-neon-orange bg-cyber-darker p-4 my-4"><div class="text-neon-orange font-bold mb-2">⚠️ WARNING</div><div>$1</div></div>')
-      .replace(/::info\s*([\s\S]*?):::/g, '<div class="border-l-4 border-neon-blue bg-cyber-darker p-4 my-4"><div class="text-neon-blue font-bold mb-2">ℹ️ INFO</div><div>$1</div></div>')
-      .replace(/\n/g, '<br>');
+      .replace(/::info\s*([\s\S]*?):::/g, '<div class="border-l-4 border-neon-blue bg-cyber-darker p-4 my-4"><div class="text-neon-blue font-bold mb-2">ℹ️ INFO</div><div>$1</div></div>');
+
+    // Process paragraphs (replace double newlines with paragraph tags)
+    markdown = markdown.replace(/\n\n/g, '</p><p class="mb-4">');
+    
+    // Wrap the content in a paragraph if it doesn't start with a block element
+    if (!markdown.startsWith('<h1') && 
+        !markdown.startsWith('<h2') && 
+        !markdown.startsWith('<h3') && 
+        !markdown.startsWith('<ul') && 
+        !markdown.startsWith('<ol') && 
+        !markdown.startsWith('<blockquote') && 
+        !markdown.startsWith('<pre') && 
+        !markdown.startsWith('<div') && 
+        !markdown.startsWith('<p')) {
+      markdown = '<p class="mb-4">' + markdown;
+    }
+    
+    // Add closing paragraph tag if needed
+    if (!markdown.endsWith('</p>') && 
+        !markdown.endsWith('</h1>') && 
+        !markdown.endsWith('</h2>') && 
+        !markdown.endsWith('</h3>') && 
+        !markdown.endsWith('</ul>') && 
+        !markdown.endsWith('</ol>') && 
+        !markdown.endsWith('</blockquote>') && 
+        !markdown.endsWith('</pre>') && 
+        !markdown.endsWith('</div>')) {
+      markdown += '</p>';
+    }
+
+    // Replace remaining newlines with <br> for line breaks within paragraphs
+    return markdown.replace(/\n/g, '<br>');
   };
 
   const sharePost = (platform: 'twitter' | 'telegram' | 'facebook') => {

@@ -1,14 +1,33 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const CustomCursor = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const trailRef = useRef<HTMLDivElement>(null);
+  const scanningRef = useRef<HTMLDivElement>(null);
   const [isClicking, setIsClicking] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      // Используем transform вместо изменения left/top для лучшей производительности
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${e.clientX - 8}px, ${e.clientY - 8}px)`;
+      }
+      
+      // Обновляем позицию trail с небольшой задержкой для эффекта следования
+      if (trailRef.current) {
+        requestAnimationFrame(() => {
+          if (trailRef.current) {
+            trailRef.current.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+          }
+        });
+      }
+      
+      // Обновляем позицию scanning эффекта при клике
+      if (isClicking && scanningRef.current) {
+        scanningRef.current.style.transform = `translate(${e.clientX - 24}px, ${e.clientY - 24}px)`;
+      }
     };
 
     const handleMouseDown = () => setIsClicking(true);
@@ -23,7 +42,7 @@ const CustomCursor = () => {
       }
     };
 
-    document.addEventListener('mousemove', updatePosition);
+    document.addEventListener('mousemove', updatePosition, { passive: true });
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseover', handleMouseOver);
@@ -34,18 +53,19 @@ const CustomCursor = () => {
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [isClicking]);
 
   return (
     <>
       {/* Main cursor */}
       <div
-        className={`fixed pointer-events-none z-[9999] mix-blend-difference transition-all duration-150 ${
+        ref={cursorRef}
+        className={`fixed pointer-events-none z-[9999] mix-blend-difference will-change-transform ${
           isClicking ? 'scale-75' : isHovering ? 'scale-150' : 'scale-100'
         }`}
         style={{
-          left: position.x - 8,
-          top: position.y - 8,
+          transform: 'translate(0, 0)',
+          transition: 'transform 0.01s linear, scale 0.15s ease-out'
         }}
       >
         <div className="relative">
@@ -80,10 +100,11 @@ const CustomCursor = () => {
 
       {/* Trail effect */}
       <div
-        className="fixed pointer-events-none z-[9998] transition-all duration-300 ease-out"
+        ref={trailRef}
+        className="fixed pointer-events-none z-[9998] will-change-transform"
         style={{
-          left: position.x - 16,
-          top: position.y - 16,
+          transform: 'translate(0, 0)',
+          transition: 'transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67)'
         }}
       >
         <div className={`w-8 h-8 rounded-full border ${
@@ -94,10 +115,10 @@ const CustomCursor = () => {
       {/* Scanning lines effect */}
       {isClicking && (
         <div
-          className="fixed pointer-events-none z-[9997]"
+          ref={scanningRef}
+          className="fixed pointer-events-none z-[9997] will-change-transform"
           style={{
-            left: position.x - 24,
-            top: position.y - 24,
+            transform: 'translate(0, 0)',
           }}
         >
           <div className="w-12 h-12 border-2 border-neon-purple rounded-full animate-ping" />

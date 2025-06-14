@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { BarChart3, Activity, Radio } from 'lucide-react';
 
 interface AudioVisualizerProps {
@@ -14,7 +14,30 @@ const AudioVisualizer = ({ audioRef, isPlaying }: AudioVisualizerProps) => {
   const dataArrayRef = useRef<Uint8Array | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const lastFrameTimeRef = useRef<number>(0);
   const [visualizerType, setVisualizerType] = useState<'bars' | 'wave' | 'circle'>('bars');
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Определяем, является ли устройство мобильным
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  // Оптимизированные настройки в зависимости от устройства
+  const settings = useMemo(() => ({
+    fftSize: isMobile ? 64 : 256,
+    frameInterval: isMobile ? 100 : 30, // миллисекунды между кадрами
+    barWidth: isMobile ? 4 : 2,
+  }), [isMobile]);
 
   useEffect(() => {
     if (!audioRef.current || !canvasRef.current) return;
@@ -30,7 +53,9 @@ const AudioVisualizer = ({ audioRef, isPlaying }: AudioVisualizerProps) => {
         sourceRef.current = source;
 
         const analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
+        // Используем оптимизированные настройки FFT в зависимости от устройства
+        analyser.fftSize = settings.fftSize;
+        analyser.smoothingTimeConstant = 0.8; // Добавляем сглаживание для более плавной анимации
         analyserRef.current = analyser;
 
         const bufferLength = analyser.frequencyBinCount;
@@ -54,29 +79,48 @@ const AudioVisualizer = ({ audioRef, isPlaying }: AudioVisualizerProps) => {
         audioContextRef.current = null;
       }
     };
-  }, [audioRef]);
+  }, [audioRef, settings]);
 
   useEffect(() => {
-    if (!isPlaying || !analyserRef.current || !dataArrayRef.current || !canvasRef.current) {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      return;
-    }
+    if (!isPlaying || !analyserRef.current || !dataArrayRef.current || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const draw = () => {
-      if (!analyserRef.current || !dataArrayRef.current) return;
+    // Оптимизируем размер canvas для лучшей производительности
+    const updateCanvasSize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      
+      // Для мобильных устройств уменьшаем разрешение canvas
+      const scaleFactor = isMobile ? 0.5 : 1;
+      
+      canvas.width = rect.width * dpr * scaleFactor;
+      canvas.height = rect.height * dpr * scaleFactor;
+      ctx.scale(dpr * scaleFactor, dpr * scaleFactor);
+    };
+    
+    updateCanvasSize();
+
+    const draw = (timestamp: number) => {
+      if (!analyserRef.current || !dataArrayRef.current || !ctx) return;
+
+      animationRef.current = requestAnimationFrame(draw);
+      
+      // Контроль частоты кадров для оптимизации производительности
+      const elapsed = timestamp - lastFrameTimeRef.current;
+      if (elapsed < settings.frameInterval) {
+        return; // Пропускаем кадр, если прошло недостаточно времени
+      }
+      
+      lastFrameTimeRef.current = timestamp;
 
       analyserRef.current.getByteFrequencyData(dataArrayRef.current);
 
-      ctx.fillStyle = '#0a0a0a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const barWidth = canvas.width / dataArrayRef.current.length;
+      // Очищаем только изменившуюся область для оптимизации
+      ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1), 
+                          canvas.height / (window.devicePixelRatio || 1));
 
       if (visualizerType === 'bars') {
         drawBars(ctx, dataArrayRef.current, barWidth, canvas);
@@ -85,69 +129,137 @@ const AudioVisualizer = ({ audioRef, isPlaying }: AudioVisualizerProps) => {
       } else if (visualizerType === 'circle') {
         drawCircle(ctx, dataArrayRef.current, canvas);
       }
-
-      animationRef.current = requestAnimationFrame(draw);
     };
 
-    draw();
-  }, [isPlaying, visualizerType]);
+    // Добавляем обработчик изменения размера окна
+    const handleResize = () => {
+      updateCanvasSize();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    lastFrameTimeRef.current = performance.now();
+    animationRef.current = requestAnimationFrame(draw);
 
-  const drawBars = (ctx: CanvasRenderingContext2D, dataArray: Uint8Array, barWidth: number, canvas: HTMLCanvasElement) => {
-    for (let i = 0; i < dataArray.length; i++) {
-      const barHeight = (dataArray[i] / 255) * canvas.height;
-      const hue = (i / dataArray.length) * 120 + 120;
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPlaying, visualizerType, settings, isMobile]);
+
+  const drawBars = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, dataArray: Uint8Array) => {
+    const canvasWidth = canvas.width / (window.devicePixelRatio || 1);
+    const canvasHeight = canvas.height / (window.devicePixelRatio || 1);
+    const barWidth = settings.barWidth;
+    const step = isMobile ? 2 : 1; // Пропускаем каждый второй бар на мобильных устройствах
+    
+    // Используем оптимизированный цикл с шагом
+    for (let i = 0; i < dataArray.length; i += step) {
+      const barHeight = (dataArray[i] / 255) * canvasHeight;
+      
+      // Оптимизация вычисления цвета
+      let hue;
+      if (isMobile) {
+        // На мобильных устройствах используем предварительно вычисленные значения
+        hue = (i % 3 === 0) ? 120 : (i % 3 === 1) ? 180 : 240;
+      } else {
+        hue = (i / dataArray.length) * 120 + 120;
+      }
+      
       ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth, barHeight);
+      ctx.fillRect(i * barWidth, canvasHeight - barHeight, barWidth, barHeight);
     }
   };
 
-  const drawWave = (ctx: CanvasRenderingContext2D, dataArray: Uint8Array, canvas: HTMLCanvasElement) => {
+  const drawWave = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, dataArray: Uint8Array) => {
+    const canvasWidth = canvas.width / (window.devicePixelRatio || 1);
+    const canvasHeight = canvas.height / (window.devicePixelRatio || 1);
+    
     ctx.strokeStyle = '#39FF14';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = isMobile ? 1.5 : 2;
     ctx.beginPath();
 
-    const sliceWidth = canvas.width / dataArray.length;
+    const step = isMobile ? 2 : 1; // Пропускаем точки на мобильных устройствах
+    const sliceWidth = canvasWidth / (dataArray.length / step);
     let x = 0;
 
-    for (let i = 0; i < dataArray.length; i++) {
+    for (let i = 0; i < dataArray.length; i += step) {
       const v = dataArray[i] / 128.0;
-      const y = v * canvas.height / 2;
+      const y = v * canvasHeight / 2;
 
       if (i === 0) {
         ctx.moveTo(x, y);
       } else {
+        // На мобильных устройствах используем более простой путь
+        if (isMobile && i % 4 !== 0) {
+          x += sliceWidth;
+          continue;
+        }
         ctx.lineTo(x, y);
       }
 
       x += sliceWidth;
     }
 
-    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.lineTo(canvasWidth, canvasHeight / 2);
     ctx.stroke();
   };
 
-  const drawCircle = (ctx: CanvasRenderingContext2D, dataArray: Uint8Array, canvas: HTMLCanvasElement) => {
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+  const drawCircle = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, dataArray: Uint8Array) => {
+    const canvasWidth = canvas.width / (window.devicePixelRatio || 1);
+    const canvasHeight = canvas.height / (window.devicePixelRatio || 1);
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
     const radius = Math.min(centerX, centerY) - 10;
 
-    ctx.strokeStyle = '#39FF14';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = isMobile ? 1.5 : 2;
+    
+    // Оптимизация для мобильных устройств - рисуем меньше линий
+    const step = isMobile ? 4 : 1;
+    
+    // Предварительно вычисляем синусы и косинусы для мобильных устройств
+    const cosCache = isMobile ? new Array(dataArray.length / step).fill(0).map((_, i) => 
+      Math.cos((i * step / dataArray.length) * Math.PI * 2)) : null;
+    const sinCache = isMobile ? new Array(dataArray.length / step).fill(0).map((_, i) => 
+      Math.sin((i * step / dataArray.length) * Math.PI * 2)) : null;
 
-    for (let i = 0; i < dataArray.length; i++) {
-      const angle = (i / dataArray.length) * Math.PI * 2;
+    for (let i = 0; i < dataArray.length; i += step) {
+      // Пропускаем некоторые точки для оптимизации
+      if (isMobile && i % 8 === 0) continue;
+      
+      let cos, sin;
+      if (isMobile && cosCache && sinCache) {
+        // Используем кэшированные значения
+        const cacheIndex = Math.floor(i / step);
+        cos = cosCache[cacheIndex % cosCache.length];
+        sin = sinCache[cacheIndex % sinCache.length];
+      } else {
+        const angle = (i / dataArray.length) * Math.PI * 2;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+      }
+      
       const amplitude = (dataArray[i] / 255) * radius;
       
-      const x1 = centerX + Math.cos(angle) * (radius - amplitude);
-      const y1 = centerY + Math.sin(angle) * (radius - amplitude);
-      const x2 = centerX + Math.cos(angle) * radius;
-      const y2 = centerY + Math.sin(angle) * radius;
+      const x1 = centerX + cos * (radius - amplitude);
+      const y1 = centerY + sin * (radius - amplitude);
+      const x2 = centerX + cos * radius;
+      const y2 = centerY + sin * radius;
 
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       
-      const hue = (i / dataArray.length) * 360;
+      // Оптимизация вычисления цвета
+      let hue;
+      if (isMobile) {
+        // Используем ограниченный набор цветов на мобильных устройствах
+        hue = (i % 12 === 0) ? 0 : (i % 12 === 4) ? 120 : 240;
+      } else {
+        hue = (i / dataArray.length) * 360;
+      }
+      
       ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
       ctx.stroke();
     }
